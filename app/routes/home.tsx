@@ -1,6 +1,7 @@
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import { Problem } from "../problem/Problem";
+import Hintarea from "~/components/Hintarea";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,6 +15,7 @@ export default function Home() {
     <>
       {/* <Welcome /> */}
       <Problem />
+      <Hintarea />
     </>
   );
 }
