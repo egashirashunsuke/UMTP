@@ -14,8 +14,14 @@ export default function Home() {
   return (
     <>
       {/* <Welcome /> */}
-      <Problem />
-      <Hintarea />
+      <div className="display flex">
+        <div className="w-5xl">
+          <Problem />
+        </div>
+        <div className="w-sm">
+          <Hintarea />
+        </div>
+      </div>
     </>
   );
 }

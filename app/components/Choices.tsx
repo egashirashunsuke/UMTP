@@ -2,7 +2,7 @@ import React from 'react'
 
 function Choices() {
   return (
-    <div>Choices</div>
+    <div className='w-xs'>Choices</div>
   )
 }
 
