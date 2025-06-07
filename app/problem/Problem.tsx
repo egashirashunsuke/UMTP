@@ -1,7 +1,16 @@
 import Choices from "~/components/Choices";
 import classdiagram from "./classdiagram.png"
 import AnswerForm from "~/components/AnswerForm";
-export function Problem() {
+import type { Answers } from "../routes/home";
+
+
+type ProblemProps = {
+  choices: string[];
+  answers: Answers;
+  onAnswerChange: (label: string, value: string) => void;
+};
+
+export function Problem({ choices, answers, onAnswerChange }: ProblemProps) {
   return (
     <>
    <section className="mt-8 bg-white dark:bg-gray-900 shadow rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700 max-w-4xl mx-auto">
@@ -21,10 +30,13 @@ export function Problem() {
       </section>
       <div>
         <section className="bg-white dark:bg-gray-900 shadow rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700 max-w-sm">
-          <Choices /> 
+          <Choices choices={choices}/> 
         </section>
         <section className="bg-white dark:bg-gray-900 shadow rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700 ">
-          <AnswerForm />
+          <AnswerForm 
+            choices={choices}
+            answers={answers}
+            onChange={onAnswerChange}/>
         </section>
       </div>
     </div>

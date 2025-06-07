@@ -1,17 +1,23 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import type { Answers } from '~/routes/home';
 
-function Hintarea() {
+type HintareaProps = {
+  answers?: Answers;
+};
+
+function Hintarea({ answers }: HintareaProps) {
   const [hint,setHint] = useState('a');
 
   const createHint = async() => {
     console.log("click");
-    try {
-      const res = await axios.get('http://localhost:8000/');
-      setHint(res.data)
-    } catch (e) {
-      console.error("通信失敗", e);
-    }
+    console.log(answers);
+    // try {
+    //   const res = await axios.get('http://localhost:8000/');
+    //   setHint(res.data)
+    // } catch (e) {
+    //   console.error("通信失敗", e);
+    // }
   }
 
   return (
