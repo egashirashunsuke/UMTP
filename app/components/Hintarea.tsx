@@ -29,7 +29,7 @@ function Hintarea({ answers }: HintareaProps) {
   return (
     <>
     <section className="bg-white shadow rounded-xl p-6 border border-gray-200 h-220" >
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={createHint} disabled={loading}>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-3" onClick={createHint} disabled={loading}>
         hintrequest
       </button>
       <h3 style={{ whiteSpace: 'pre-line'}}>
