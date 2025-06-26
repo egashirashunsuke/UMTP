@@ -13,7 +13,10 @@ function Hintarea({ answers }: HintareaProps) {
     console.log("click");
     console.log(answers);
     try {
-      const res = await axios.post('http://localhost:8000/', { answers });
+      const baseURL = import.meta.env.PROD
+      ? 'https://umtp-backend-1.onrender.com'
+      : 'http://localhost:8000';
+      const res = await axios.post(`${baseURL}/`, { answers });
       setHint(res.data.answer ?? res.data);
     } catch (e) {
       console.error("通信失敗", e);
