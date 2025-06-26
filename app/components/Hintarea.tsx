@@ -7,7 +7,7 @@ type HintareaProps = {
 };
 
 function Hintarea({ answers }: HintareaProps) {
-  const [hint,setHint] = useState('a');
+  const [hint,setHint] = useState('hintがここに表示されます');
 
   const createHint = async() => {
     console.log("click");
@@ -22,9 +22,8 @@ function Hintarea({ answers }: HintareaProps) {
 
   return (
     <>
-    <section className="mt-8 bg-white dark:bg-gray-900 shadow rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700 h-full" >
-      Hintarea
-      <button onClick={createHint}>ボタン</button>
+    <section className="bg-white shadow rounded-xl p-6 border border-gray-200 h-220" >
+      <button onClick={createHint}>hintrequestボタン</button>
       <h3 style={{ whiteSpace: 'pre-line'}}>
         {typeof hint === "string" ? hint : JSON.stringify(hint)}
       </h3>
