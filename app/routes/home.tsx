@@ -31,14 +31,14 @@ export default function Home() {
   return (
     <>
       {/* <Welcome /> */}
-      <div className="display flex">
-        <div className="w-5xl">
+      <div className="display flex w-full min-h-screen">
+        <div className="w-7xl">
           <Problem 
             choices={ChoiceList}
             answers={answers}
             onAnswerChange={handleAnswerChange}/>
         </div>
-        <div className="w-sm">
+        <div className="w-lg m-8">
           <Hintarea answers={answers}/>
         </div>
       </div>
