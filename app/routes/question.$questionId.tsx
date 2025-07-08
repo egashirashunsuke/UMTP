@@ -16,6 +16,7 @@ export type Choice = {
 
 export type QuestionData = {
   id: number;
+  problem_description: string;
   question: string;
   answer: string;
   image: string;
@@ -61,6 +62,8 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
     <div className="flex w-full min-h-screen">
       <div className="w-7xl">
         <Problem
+          problemDescription={loaderData.problem_description}
+          question={loaderData.question}
           choices={choiceTexts}
           answers={answers}
           onAnswerChange={handleAnswerChange}
