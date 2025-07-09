@@ -1,11 +1,8 @@
-
 import React, { useState } from "react";
 import { Problem } from "../problem/Problem";
 import Hintarea from "~/components/Hintarea";
 import axios from "axios";
 import type { Route } from "./+types/question.$questionId";
-import type { LoaderFunction } from "react-router";
-
 
 export type Choice = {
   id: number;
@@ -37,18 +34,16 @@ export async function loader({
   return res.data;
 }
 
-
 export default function QuestionPage({ loaderData }: Route.ComponentProps) {
   if (!loaderData) {
-    throw new Response("Not Found", { status: 404 }); 
+    throw new Response("Not Found", { status: 404 });
   }
   console.log("loaderData", loaderData);
   console.log("loaderData", loaderData.choices);
 
-
   const [answers, setAnswers] = useState<Record<string, string>>(
     Object.fromEntries(
-      loaderData.choices.map((c:Choice) => [c.label.toLowerCase(), ""])
+      loaderData.choices.map((c: Choice) => [c.label.toLowerCase(), ""])
     )
   );
 
@@ -56,7 +51,7 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
     setAnswers((prev) => ({ ...prev, [label]: value }));
   };
 
-  const choiceTexts = loaderData.choices.map((c:Choice) => c.text);
+  const choiceTexts = loaderData.choices.map((c: Choice) => c.text);
 
   return (
     <div className="flex w-full min-h-screen">
