@@ -61,6 +61,7 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
           question={loaderData.question}
           choices={choiceTexts}
           answers={answers}
+          image={loaderData.image}
           onAnswerChange={handleAnswerChange}
         />
       </div>

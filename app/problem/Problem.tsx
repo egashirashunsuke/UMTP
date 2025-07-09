@@ -1,5 +1,4 @@
 import Choices from "~/components/Choices";
-import classdiagram from "./classdiagram.png";
 import AnswerForm from "~/components/AnswerForm";
 import type { Answers } from "../routes/home";
 
@@ -8,6 +7,7 @@ type ProblemProps = {
   question?: string;
   choices: string[];
   answers: Answers;
+  image?: string;
   onAnswerChange: (label: string, value: string) => void;
 };
 
@@ -16,6 +16,7 @@ export function Problem({
   question,
   choices,
   answers,
+  image,
   onAnswerChange,
 }: ProblemProps) {
   return (
@@ -42,7 +43,7 @@ export function Problem({
       </div>
       <div className="display flex align-center justify-center m-8">
         <section className="bg-white shadow rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-          <img src={classdiagram} className="w-full max-w-sm" />
+          <img src={image} className="w-full max-w-sm" />
         </section>
         <div>
           <section className="bg-white shadow rounded-xl p-6 border border-gray-200 max-w-sm">
