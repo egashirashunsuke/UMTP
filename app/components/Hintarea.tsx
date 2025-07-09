@@ -4,9 +4,10 @@ import type { Answers } from '~/routes/home';
 
 type HintareaProps = {
   answers?: Answers;
+  questionId?: number; 
 };
 
-function Hintarea({ answers }: HintareaProps) {
+function Hintarea({ answers, questionId }: HintareaProps) {
   const [hint, setHint] = useState('hintがここに表示されます');
   const [loading, setLoading] = useState(false);
 
@@ -16,7 +17,7 @@ function Hintarea({ answers }: HintareaProps) {
       const baseURL = import.meta.env.PROD
         ? 'https://umtp-backend-1.onrender.com'
         : 'http://localhost:8000';
-      const res = await axios.post(`${baseURL}/`, { answers });
+      const res = await axios.post(`${baseURL}/${questionId}`, { answers });
       setHint(res.data.answer ?? res.data);
     } catch (e) {
       console.error("通信失敗", e);

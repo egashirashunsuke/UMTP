@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";    // ← ここで useParams をインポート
 import { Problem } from "../problem/Problem";
 import Hintarea from "~/components/Hintarea";
 import axios from "axios";
@@ -41,6 +42,9 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
   console.log("loaderData", loaderData);
   console.log("loaderData", loaderData.choices);
 
+  const { questionId } = useParams<{ questionId: string }>();
+
+
   const [answers, setAnswers] = useState<Record<string, string>>(
     Object.fromEntries(
       loaderData.choices.map((c: Choice) => [c.label.toLowerCase(), ""])
@@ -66,7 +70,7 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
         />
       </div>
       <div className="w-lg m-8">
-        <Hintarea answers={answers} />
+        <Hintarea answers={answers} questionId={questionId ? Number(questionId) : undefined}/>
       </div>
     </div>
   );
