@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";    // ← ここで useParams をインポート
+import { useParams } from "react-router-dom";    
 import { Problem } from "../problem/Problem";
 import Hintarea from "~/components/Hintarea";
 import axios from "axios";
