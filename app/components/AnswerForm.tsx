@@ -1,30 +1,45 @@
-import React from 'react'
+import React from "react";
 import type { Answers } from "../routes/home";
-
+import type { Choice } from "~/routes/question.$questionId";
 
 type AnswerFormProps = {
-  choices: string[];
+  choices: Choice[];
   answers: Answers;
   onChange: (label: string, value: string) => void;
-}
+};
 function AnswerForm({ choices, answers, onChange }: AnswerFormProps) {
+  const sorted = React.useMemo(
+    () =>
+      [...choices].sort((a, b) =>
+        a.label.localeCompare(b.label, "en", { sensitivity: "base" })
+      ),
+    [choices]
+  );
   return (
-    <div>AnswerForm
-       {choices.map((_, idx) => {
-        const label = String.fromCharCode(97 + idx);
-        return (
-          <div key={label}>
-            {label}-
-            <input
-              type="text"
-              value={answers[label] || ""}
-              onChange={e => onChange(label, e.target.value)}
-            />
-          </div>
-        );
-      })}
+    <div>
+      <div className="flex flex-col gap-1">
+        {sorted.map((_, idx) => {
+          const label = String.fromCharCode(97 + idx); // a, b, c...
+          return (
+            <div key={label}>
+              {label}：
+              <select
+                value={answers[label] ?? ""}
+                onChange={(e) => onChange(label, e.target.value)}
+              >
+                <option value="">未選択</option>
+                {choices.map((ch) => (
+                  <option key={ch.label} value={`${ch.label}.${ch.text}`}>
+                    {ch.label}. {ch.text}
+                  </option>
+                ))}
+              </select>
+            </div>
+          );
+        })}
+      </div>
     </div>
-  )
+  );
 }
 
-export default AnswerForm
+export default AnswerForm;

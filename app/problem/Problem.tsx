@@ -1,11 +1,12 @@
 import Choices from "~/components/Choices";
 import AnswerForm from "~/components/AnswerForm";
 import type { Answers } from "../routes/home";
+import type { Choice } from "~/routes/question.$questionId";
 
 type ProblemProps = {
   problemDescription?: string;
   question?: string;
-  choices: string[];
+  choices: Choice[];
   answers: Answers;
   image?: string;
   onAnswerChange: (label: string, value: string) => void;
