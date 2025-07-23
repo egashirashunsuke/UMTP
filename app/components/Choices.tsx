@@ -1,22 +1,29 @@
-import { index } from '@react-router/dev/routes'
-import React from 'react'
+import { index } from "@react-router/dev/routes";
+import React from "react";
+import type { Choice } from "~/routes/question.$questionId";
 
 type ChoicesProps = {
-  choices: string[]
-}
+  choices: Choice[];
+};
 
 function Choices({ choices }: ChoicesProps) {
+  const sorted = React.useMemo(
+    () =>
+      [...choices].sort((a, b) =>
+        a.label.localeCompare(b.label, "en", { sensitivity: "base" })
+      ),
+    [choices]
+  );
   return (
-    <div className='w-xs'>
+    <div className="w-xs">
       選択肢
-      {choices.map((word, index) => (
+      {sorted.map((word, index) => (
         <div key={index}>
-          {String.fromCharCode(65 + index)}. {word}
+          {word.label}. {word.text}
         </div>
       ))}
-
     </div>
-  )
+  );
 }
 
-export default Choices
+export default Choices;

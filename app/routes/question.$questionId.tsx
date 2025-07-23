@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";    
+import { useParams } from "react-router-dom";
 import { Problem } from "../problem/Problem";
 import Hintarea from "~/components/Hintarea";
 import axios from "axios";
@@ -44,7 +44,6 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
 
   const { questionId } = useParams<{ questionId: string }>();
 
-
   const [answers, setAnswers] = useState<Record<string, string>>(
     Object.fromEntries(
       loaderData.choices.map((c: Choice) => [c.label.toLowerCase(), ""])
@@ -55,22 +54,23 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
     setAnswers((prev) => ({ ...prev, [label]: value }));
   };
 
-  const choiceTexts = loaderData.choices.map((c: Choice) => c.text);
-
   return (
     <div className="flex w-full min-h-screen">
       <div className="w-7xl">
         <Problem
           problemDescription={loaderData.problem_description}
           question={loaderData.question}
-          choices={choiceTexts}
+          choices={loaderData.choices}
           answers={answers}
           image={loaderData.image}
           onAnswerChange={handleAnswerChange}
         />
       </div>
       <div className="w-lg m-8">
-        <Hintarea answers={answers} questionId={questionId ? Number(questionId) : undefined}/>
+        <Hintarea
+          answers={answers}
+          questionId={questionId ? Number(questionId) : undefined}
+        />
       </div>
     </div>
   );
