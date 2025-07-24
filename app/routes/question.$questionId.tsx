@@ -24,6 +24,7 @@ export type QuestionData = {
 type LoaderData = {
   question: QuestionData;
   nextId: number | null;
+  prevId: number | null;
 };
 
 export async function loader({
@@ -34,11 +35,14 @@ export async function loader({
     : "http://localhost:8000";
   const id = Number(params.questionId);
 
-  // 並列で「問題」と「次の問題ID」を取得
-  const [qRes, nextRes] = await Promise.all([
+  const [qRes, nextRes, prevRes] = await Promise.all([
     axios.get<QuestionData>(`${baseURL}/question/${id}`),
     axios
       .get<{ id: number }>(`${baseURL}/question/${id}/next`)
+      .then((r) => r.data.id)
+      .catch(() => null),
+    axios
+      .get<{ id: number }>(`${baseURL}/question/${id}/prev`)
       .then((r) => r.data.id)
       .catch(() => null),
   ]);
@@ -46,6 +50,7 @@ export async function loader({
   return {
     question: qRes.data,
     nextId: nextRes,
+    prevId: prevRes,
   };
 }
 
@@ -70,7 +75,12 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
   return (
     <div className="flex w-full min-h-screen">
       <div className="w-7xl">
-        <Link to="/questions">問題一覧</Link>
+        <Link
+          to="/questions"
+          className="inline-block mb-4 text-gray-600 hover:underline"
+        >
+          ← 問題一覧へ戻る
+        </Link>
         <Problem
           problemDescription={loaderData.question.problem_description}
           question={loaderData.question.question}
@@ -79,8 +89,40 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
           image={loaderData.question.image}
           onAnswerChange={handleAnswerChange}
         />
-        <button>回答を送信</button>
-        <Link to={`/question/${loaderData.nextId}`}>次の問題へ</Link>
+        <button className="w-full md:w-auto px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded shadow-md transition">
+          回答を送信
+        </button>
+        {loaderData.prevId ? (
+          <Link
+            to={`/question/${loaderData.prevId}`}
+            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded shadow"
+          >
+            ← 前の問題
+          </Link>
+        ) : (
+          <button
+            disabled
+            className="px-4 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed"
+          >
+            ← 前の問題
+          </button>
+        )}
+
+        {loaderData.nextId ? (
+          <Link
+            to={`/question/${loaderData.nextId}`}
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded shadow"
+          >
+            次の問題 →
+          </Link>
+        ) : (
+          <button
+            disabled
+            className="px-4 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed"
+          >
+            次の問題 →
+          </button>
+        )}
       </div>
       <div className="w-lg m-8">
         <Hintarea
