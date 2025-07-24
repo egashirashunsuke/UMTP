@@ -67,7 +67,6 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
       ])
     )
   );
-  const [nextQuestionId, setNextQuestionId] = useState<number | null>(null);
   const handleAnswerChange = (label: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [label]: value }));
   };
