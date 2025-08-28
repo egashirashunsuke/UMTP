@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { QuestionData } from "~/routes/question.$questionid.edit";
 
 export type ProblemFormData = {
   problem_description: string;
@@ -14,7 +15,7 @@ export const QuestionForm = ({
   onSubmit,
   loading,
 }: {
-  initialData?: Partial<ProblemFormData>;
+  initialData?: QuestionData;
   onSubmit: (data: ProblemFormData) => void;
   loading: boolean;
 }) => {
@@ -24,7 +25,7 @@ export const QuestionForm = ({
   const [question, setQuestion] = useState(initialData?.question || "");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState(
-    initialData?.imageFile ? URL.createObjectURL(initialData.imageFile) : ""
+    initialData?.image ? initialData?.image : ""
   );
   const [classdiagramPlantUML, setClassdiagramPlantUML] = useState(
     initialData?.class_diagram_plantuml || ""
