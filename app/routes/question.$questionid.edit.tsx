@@ -3,6 +3,28 @@ import axios from "axios";
 import { initializeApp } from "firebase/app";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { QuestionForm, type ProblemFormData } from "~/components/QuestionForm";
+import type { Route } from "./+types/question.$questionid.edit";
+
+export type Choice = {
+  id: number;
+  question_id: number;
+  label: string;
+  text: string;
+};
+
+export type QuestionData = {
+  id: number;
+  problem_description: string;
+  question: string;
+  answer_process: string;
+  image: string;
+  class_diagram_plantuml: string;
+  choices: Choice[];
+  created_at: string;
+};
+type LoaderData = {
+  question: QuestionData;
+};
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -13,12 +35,32 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
-
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
-export default function ProblemSetting() {
+export const loader = async ({
+  params,
+}: Route.LoaderArgs): Promise<LoaderData> => {
+  const baseURL = import.meta.env.PROD
+    ? "https://umtp-backend-1.onrender.com"
+    : "http://localhost:8000";
+  const id = Number(params.questionid);
+
+  const res = await axios.get<QuestionData>(`${baseURL}/question/${id}`);
+
+  return { question: res.data };
+};
+
+type Props = {
+  loaderData: LoaderData;
+};
+
+const QuestionEditPage = (props: Props) => {
+  const { loaderData } = props;
+
+  if (!loaderData) {
+    throw new Response("Not Found", { status: 404 });
+  }
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (data: ProblemFormData) => {
@@ -54,8 +96,14 @@ export default function ProblemSetting() {
 
   return (
     <div className="max-w-xl mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-4">問題設定フォーム</h1>
-      <QuestionForm onSubmit={handleSubmit} loading={loading} />
+      <h1 className="text-2xl font-bold mb-4">問題編集</h1>
+      <QuestionForm
+        initialData={loaderData?.question}
+        onSubmit={handleSubmit}
+        loading={loading}
+      />
     </div>
   );
-}
+};
+
+export default QuestionEditPage;
