@@ -18,7 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
-export default function ProblemSetting() {
+export default function QuestionNew() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (data: ProblemFormData) => {
@@ -42,6 +42,7 @@ export default function ProblemSetting() {
         image: uploadedURL,
         class_diagram_plantuml: data.class_diagram_plantuml,
         choices: data.choices,
+        answer_maggings: data.answer_mappings,
       };
       const baseURL = import.meta.env.PROD
         ? "https://umtp-backend-1.onrender.com"
