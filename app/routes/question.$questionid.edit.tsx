@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { QuestionForm, type ProblemFormData } from "~/components/QuestionForm";
 import type { Route } from "./+types/question.$questionid.edit";
@@ -35,7 +35,7 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
 export const loader = async ({

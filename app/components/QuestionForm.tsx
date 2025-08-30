@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { QuestionData } from "~/routes/question.$questionid.edit";
 
 export type ProblemFormData = {
@@ -6,7 +6,8 @@ export type ProblemFormData = {
   question: string;
   imageFile: File | null;
   class_diagram_plantuml: string;
-  choices: { label: string; text: string }[];
+  choices: { code: string; text: string }[];
+  answer_mappings: { blank: string; choice_code: string }[];
   answer_process: string;
 };
 
@@ -31,15 +32,30 @@ export const QuestionForm = ({
     initialData?.class_diagram_plantuml || ""
   );
   const [choices, setChoices] = useState(
-    initialData?.choices || [{ label: "", text: "" }]
+    (initialData?.choices || [{ text: "" }]).map((c, idx) => ({
+      code: String.fromCharCode(65 + idx), // A, B, C...
+      text: c.text,
+    }))
   );
+  const [answerMappings, setAnswerMappings] = useState<
+    { blank: string; choice_code: string }[]
+  >([]);
   const [answerProcess, setAnswerProcess] = useState(
     initialData?.answer_process || ""
   );
 
+  useEffect(() => {
+    const newblanks = Array.from({ length: choices.length }, (_, i) =>
+      String.fromCharCode(97 + i)
+    );
+    setAnswerMappings((prev) =>
+      newblanks.map((s, i) => prev[i] || { blank: s, choice_code: "" })
+    );
+  }, [choices]);
+
   const handleChoiceChange = (
     idx: number,
-    key: "label" | "text",
+    key: "code" | "text",
     value: string
   ) => {
     setChoices((prev) =>
@@ -48,7 +64,11 @@ export const QuestionForm = ({
   };
 
   const addChoice = () =>
-    setChoices((prev) => [...prev, { label: "", text: "" }]);
+    setChoices((prev) => [
+      ...prev,
+      { code: String.fromCharCode(65 + prev.length), text: "" },
+    ]);
+
   const removeChoice = (idx: number) =>
     setChoices((prev) =>
       prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev
@@ -68,6 +88,11 @@ export const QuestionForm = ({
       setPreviewUrl("");
     }
   };
+  const handleMappingChange = (idx: number, value: string) => {
+    setAnswerMappings((prev) =>
+      prev.map((m, i) => (i === idx ? { ...m, choice_code: value } : m))
+    );
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +101,11 @@ export const QuestionForm = ({
       question,
       imageFile,
       class_diagram_plantuml: classdiagramPlantUML,
-      choices,
+      choices: choices.map((c, idx) => ({
+        code: String.fromCharCode(65 + idx),
+        text: c.text,
+      })),
+      answer_mappings: answerMappings, // ★追加
       answer_process: answerProcess,
     });
   };
@@ -105,7 +134,7 @@ export const QuestionForm = ({
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">画像</label>
+          <label className="block font-semibold mb-1">図の画像</label>
           <input type="file" accept="image/*" onChange={handleImageChange} />
           {previewUrl && (
             <div className="mt-2">
@@ -118,7 +147,7 @@ export const QuestionForm = ({
 
         <div>
           <label className="block font-semibold mb-1">
-            クラス図 (PlantUML)
+            図の文字表現(PlantUMLなど)
           </label>
           <textarea
             className="w-full border rounded p-2"
@@ -135,17 +164,13 @@ export const QuestionForm = ({
               <input
                 className="border rounded p-1 w-16"
                 type="text"
-                placeholder="ラベル"
-                value={choice.label}
-                onChange={(e) =>
-                  handleChoiceChange(idx, "label", e.target.value)
-                }
-                required
+                value={String.fromCharCode(65 + idx)}
+                readOnly
               />
               <input
                 className="border rounded p-1 flex-1"
                 type="text"
-                placeholder="ワード"
+                placeholder="選択肢"
                 value={choice.text}
                 onChange={(e) =>
                   handleChoiceChange(idx, "text", e.target.value)
@@ -171,7 +196,29 @@ export const QuestionForm = ({
           </button>
         </div>
         <div>
-          <label className="block font-semibold mb-1">回答プロセス</label>
+          <label className="block font-semibold mb-1">
+            解答（穴埋めマッピング）
+          </label>
+          {answerMappings.map((m, idx) => (
+            <div key={m.blank} className="flex items-center mb-2 gap-2">
+              <span className="w-8 font-bold">{m.blank}</span>
+              <select
+                className="border rounded p-1"
+                value={m.choice_code}
+                onChange={(e) => handleMappingChange(idx, e.target.value)}
+              >
+                <option value="">未選択</option>
+                {choices.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.code} - {c.text}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </div>
+        <div>
+          <label className="block font-semibold mb-1">解答プロセス</label>
           <textarea
             className="w-full border rounded p-2"
             rows={4}
