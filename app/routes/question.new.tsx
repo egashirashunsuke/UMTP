@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { QuestionForm, type ProblemFormData } from "~/components/QuestionForm";
 
@@ -15,7 +15,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
 export default function QuestionNew() {
