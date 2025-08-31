@@ -36,10 +36,10 @@ export function Problem({
             </div>
             {problemDescription?.trimStart()}
           </div>
-          <p className="text-gray-700  leading-relaxed">
+          <div className="text-gray-700  leading-relaxed">
             <div className="text-xl font-bold">設問</div>
             {question}
-          </p>
+          </div>
         </section>
       </div>
       <div className="display flex align-center justify-center m-8">

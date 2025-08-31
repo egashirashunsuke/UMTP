@@ -67,8 +67,14 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
       ])
     )
   );
+  const [isReset, setIsReset] = useState(false);
   const handleAnswerChange = (label: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [label]: value }));
+  };
+
+  const handleSubmit = () => {
+    console.log("回答送信:", answers);
+    setIsReset(true);
   };
 
   return (
@@ -88,7 +94,10 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
           image={loaderData.question.image}
           onAnswerChange={handleAnswerChange}
         />
-        <button className="w-full md:w-auto px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded shadow-md transition">
+        <button
+          onClick={handleSubmit}
+          className="w-full md:w-auto px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded shadow-md transition"
+        >
           回答を送信
         </button>
         {loaderData.prevId ? (
