@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import type { Answers } from "~/routes/home";
 import {
@@ -27,17 +27,40 @@ import {
 type HintareaProps = {
   answers?: Answers;
   questionId?: number;
+  isReset?: boolean;
 };
 
 type HintResponse = {
   hints: string[];
 };
 
-function Hintarea({ answers, questionId }: HintareaProps) {
+function Hintarea({ answers, questionId, isReset }: HintareaProps) {
   const [hints, setHints] = useState<string[]>([""]);
   const [loading, setLoading] = useState(false);
 
   const [openHints, setOpenHints] = useState<number[]>([]);
+  const [seenHints, setSeenHints] = useState<number[]>([]);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem(`seenHints-${questionId}`);
+    if (saved) {
+      setSeenHints(JSON.parse(saved));
+    }
+  }, [questionId]);
+
+  useEffect(() => {
+    sessionStorage.setItem(
+      `seenHints-${questionId}`,
+      JSON.stringify(seenHints)
+    );
+  }, [seenHints, questionId]);
+
+  useEffect(() => {
+    if (isReset && questionId != null) {
+      setSeenHints([]);
+      sessionStorage.removeItem(`seenHints-${questionId}`);
+    }
+  }, [isReset, questionId]);
 
   const createHint = async () => {
     setLoading(true);
@@ -66,7 +89,12 @@ function Hintarea({ answers, questionId }: HintareaProps) {
         ? prev.filter((index) => index !== hintIndex)
         : [...prev, hintIndex]
     );
+
+    if (!seenHints.includes(hintIndex)) {
+      setSeenHints((prev) => [...prev, hintIndex]);
+    }
   };
+
   const getHintIcon = (level: number) => {
     switch (level) {
       case 0:
@@ -158,6 +186,16 @@ function Hintarea({ answers, questionId }: HintareaProps) {
                               : index === 1
                               ? "部分解答"
                               : "手順ガイド"}
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className={`ml-2 ${
+                              seenHints.includes(index)
+                                ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                                : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                            }`}
+                          >
+                            {seenHints.includes(index) ? "開封済み" : "未開封"}
                           </Badge>
                         </div>
                         {openHints.includes(index) ? (
