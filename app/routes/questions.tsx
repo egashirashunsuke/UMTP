@@ -37,9 +37,8 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
   console.log("loaderData", loaderData);
 
   return (
-    <div className="flex w-full min-h-screen">
+    <div className="flex w-full min-h-screen mt-8">
       <div className="w-7xl">
-        <h1 className="text-2xl font-bold mb-4">問題一覧</h1>
         <ul className="space-y-4">
           {loaderData.map((q) => (
             <li key={q.id} className="border rounded p-4 hover:bg-gray-50">
