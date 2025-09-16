@@ -1,6 +1,14 @@
 import axios from "axios";
 import type { Route } from "./+types/questions";
 import { Link } from "react-router";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
 
 export type Choice = {
   id: number;
@@ -37,9 +45,16 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
   console.log("loaderData", loaderData);
 
   return (
-    <div className="flex w-full min-h-screen mt-8">
+    <div className="flex w-full min-h-screen m-8">
       <div className="w-7xl">
-        <ul className="space-y-4">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/questions">問題一覧</BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <ul className="space-y-4 mt-4">
           {loaderData.map((q) => (
             <li key={q.id} className="border rounded p-4 hover:bg-gray-50">
               <Link

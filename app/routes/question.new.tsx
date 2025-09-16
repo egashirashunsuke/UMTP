@@ -3,6 +3,14 @@ import axios from "axios";
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { QuestionForm, type ProblemFormData } from "~/components/QuestionForm";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -55,7 +63,17 @@ export default function QuestionNew() {
 
   return (
     <div className="max-w-xl mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-4">問題設定フォーム</h1>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/questions">問題一覧</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/questions">問題登録</BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <QuestionForm onSubmit={handleSubmit} loading={loading} />
     </div>
   );

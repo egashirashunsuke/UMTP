@@ -4,6 +4,14 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { QuestionForm, type ProblemFormData } from "~/components/QuestionForm";
 import type { Route } from "./+types/question.$questionid.edit";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
 
 export type Choice = {
   id: number;
@@ -96,7 +104,13 @@ const QuestionEditPage = (props: Props) => {
 
   return (
     <div className="max-w-xl mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-4">問題編集</h1>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/questions">問題編集</BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <QuestionForm
         initialData={loaderData?.question}
         onSubmit={handleSubmit}

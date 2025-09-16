@@ -23,7 +23,7 @@ export function Problem({
   return (
     <>
       <div className="h-90">
-        <section className="m-8 bg-white shadow rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700 max-w-4xl mx-auto">
+        <section className="mt-8 bg-white shadow rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700 max-w-4xl mx-auto">
           <div
             style={{
               whiteSpace: "pre-wrap", // 改行とスペースをそのまま反映

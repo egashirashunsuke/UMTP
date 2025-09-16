@@ -4,7 +4,14 @@ import { Problem } from "../problem/Problem";
 import Hintarea from "~/components/Hintarea";
 import axios from "axios";
 import type { Route } from "./+types/question.$questionId";
-
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
 export type Choice = {
   id: number;
   question_id: number;
@@ -79,13 +86,18 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
 
   return (
     <div className="flex w-full min-h-screen">
-      <div className="w-7xl">
-        <Link
-          to="/questions"
-          className="inline-block mb-4 text-gray-600 hover:underline"
-        >
-          ← 問題一覧へ戻る
-        </Link>
+      <div className="w-7xl m-8">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/questions">問題一覧</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink>問題{questionId}</BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <Problem
           problemDescription={loaderData.question.problem_description}
           question={loaderData.question.question}
