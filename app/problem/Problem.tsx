@@ -2,6 +2,7 @@ import Choices from "~/components/Choices";
 import AnswerForm from "~/components/AnswerForm";
 import type { Answers } from "../routes/home";
 import type { Choice } from "~/routes/question.$questionId";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 type ProblemProps = {
   problemDescription?: string;
@@ -43,8 +44,25 @@ export function Problem({
         </section>
       </div>
       <div className="display flex justify-center px-6 pb-6 gap-4 h-80">
-        <section className="flex-1 bg-white shadow rounded-xl p-6 border border-gray-200">
-          <img src={image} className="max-w-full max-h-full object-contain" />
+        <section className="flex-1 justify-center flex items-center bg-white shadow rounded-xl p-2 border border-gray-200 overflow-hidden">
+          <TransformWrapper limitToBounds={false} minScale={0.01}>
+            <TransformComponent
+              wrapperStyle={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              contentStyle={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <img src={image} className="h-70" />
+            </TransformComponent>
+          </TransformWrapper>
         </section>
         <section className="bg-white shadow rounded-xl p-6 border border-gray-200 max-w-sm">
           <Choices choices={choices} />
