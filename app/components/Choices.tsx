@@ -15,7 +15,7 @@ function Choices({ choices }: ChoicesProps) {
     [choices]
   );
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       選択肢
       {sorted.map((word, index) => (
         <div key={index}>
