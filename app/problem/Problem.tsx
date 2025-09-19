@@ -2,6 +2,7 @@ import Choices from "~/components/Choices";
 import AnswerForm from "~/components/AnswerForm";
 import type { Answers } from "../routes/home";
 import type { Choice } from "~/routes/question.$questionId";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 type ProblemProps = {
   problemDescription?: string;
@@ -22,8 +23,8 @@ export function Problem({
 }: ProblemProps) {
   return (
     <>
-      <div className="h-90">
-        <section className="mt-8 bg-white shadow rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700 max-w-4xl mx-auto">
+      <div className="p-6">
+        <section className="h-80 bg-white shadow rounded-xl p-6 space-y-2 border border-gray-200 overflow-y-auto">
           <div
             style={{
               whiteSpace: "pre-wrap", // 改行とスペースをそのまま反映
@@ -42,22 +43,37 @@ export function Problem({
           </div>
         </section>
       </div>
-      <div className="display flex align-center justify-center m-8">
-        <section className="bg-white shadow rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-          <img src={image} className="w-full max-w-sm" />
+      <div className="display flex justify-center px-6 pb-6 gap-4 h-80">
+        <section className="flex-1 justify-center flex items-center bg-white shadow rounded-xl p-2 border border-gray-200 overflow-hidden">
+          <TransformWrapper limitToBounds={false} minScale={0.01}>
+            <TransformComponent
+              wrapperStyle={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              contentStyle={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <img src={image} className="h-70" />
+            </TransformComponent>
+          </TransformWrapper>
         </section>
-        <div>
-          <section className="bg-white shadow rounded-xl p-6 border border-gray-200 max-w-sm">
-            <Choices choices={choices} />
-          </section>
-          <section className="bg-white shadow rounded-xl p-6 border border-gray-200">
-            <AnswerForm
-              choices={choices}
-              answers={answers}
-              onChange={onAnswerChange}
-            />
-          </section>
-        </div>
+        <section className="bg-white shadow rounded-xl p-6 border border-gray-200 max-w-sm">
+          <Choices choices={choices} />
+        </section>
+        <section className="bg-white shadow rounded-xl p-6 border border-gray-200">
+          <AnswerForm
+            choices={choices}
+            answers={answers}
+            onChange={onAnswerChange}
+          />
+        </section>
       </div>
     </>
   );

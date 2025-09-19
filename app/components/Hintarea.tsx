@@ -36,7 +36,7 @@ type HintResponse = {
 };
 
 function Hintarea({ answers, questionId, isReset }: HintareaProps) {
-  const [hints, setHints] = useState<string[]>([""]);
+  const [hints, setHints] = useState<string[]>(["まだヒントはありません。"]);
   const [loading, setLoading] = useState(false);
 
   const [openHints, setOpenHints] = useState<number[]>([]);
@@ -124,85 +124,83 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
 
   return (
     <>
-      <section className="bg-white shadow rounded-xl p-6 border border-gray-200 h-220">
+      <section className="bg-white shadow rounded-xl p-6 border border-gray-200 h-full overflow-y-auto">
         <div className="mb-3">
           <Button onClick={createHint} disabled={loading}>
-            hintrequest
+            ヒントを要求する
             {loading && <Loader2Icon className="animate-spin" />}
           </Button>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center py-10">
-            <span className="sr-only">Loading...</span>
-          </div>
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lightbulb className="h-5 w-5 text-yellow-500" />
-                学習ヒント
-              </CardTitle>
-              <CardDescription>
-                必要に応じてヒントを確認してください。段階的に詳しくなります。
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {hints.map((hint, index) => (
-                <div key={index}>
-                  <Collapsible
-                    open={openHints.includes(index)}
-                    onOpenChange={() => toggleHint(index)}
-                  >
-                    <CollapsibleTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-between p-4 h-auto text-left hover:bg-gray-100 dark:hover:bg-gray-800"
-                      >
-                        <div className="flex items-center gap-3">
-                          {getHintIcon(index)}
-                          <span className="font-medium">
-                            レベル {index + 1}
-                          </span>
-                          <Badge className={getHintColor(index)}>
-                            {index === 0
-                              ? "方向付け"
-                              : index === 1
-                              ? "部分解答"
-                              : "手順ガイド"}
-                          </Badge>
-                          <Badge
-                            variant="outline"
-                            className={`ml-2 ${
-                              seenHints.includes(index)
-                                ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-                                : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                            }`}
-                          >
-                            {seenHints.includes(index) ? "開封済み" : "未開封"}
-                          </Badge>
-                        </div>
-                        {openHints.includes(index) ? (
-                          <ChevronDown className="h-4 w-4" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="px-4 pb-4">
-                      <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-blue-500">
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                          {hint}
-                        </p>
+        <Card className="w-full relative">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="h-5 w-5 text-yellow-500" />
+              LLMによるヒント
+            </CardTitle>
+            <CardDescription>
+              必要に応じてヒントを確認してください。ヒントはレベルが上がるにつれ，段階的に詳しくなります。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {hints.map((hint, index) => (
+              <div key={index}>
+                <Collapsible
+                  open={openHints.includes(index)}
+                  onOpenChange={() => toggleHint(index)}
+                >
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-between p-4 h-auto text-left hover:bg-gray-100 dark:hover:bg-gray-800"
+                    >
+                      <div className="flex items-center gap-3">
+                        {getHintIcon(index)}
+                        <span className="font-medium">レベル {index + 1}</span>
+                        <Badge className={getHintColor(index)}>
+                          {index === 0
+                            ? "方向付け"
+                            : index === 1
+                            ? "部分解答"
+                            : "手順ガイド"}
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className={`ml-2 ${
+                            seenHints.includes(index)
+                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                              : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                          }`}
+                        >
+                          {seenHints.includes(index) ? "開封済み" : "未開封"}
+                        </Badge>
                       </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-                  {index < hints.length - 1 && <Separator className="mt-4" />}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
+                      {openHints.includes(index) ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-4 pb-4">
+                    <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-blue-500">
+                      <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        {hint}
+                      </p>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+                {index < hints.length - 1 && <Separator className="mt-4" />}
+              </div>
+            ))}
+          </CardContent>
+
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-xl">
+              <Loader2Icon className="animate-spin h-8 w-8 text-gray-500" />
+            </div>
+          )}
+        </Card>
       </section>
     </>
   );

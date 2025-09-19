@@ -12,6 +12,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../components/ui/breadcrumb";
+import { Button } from "../components/ui/button";
+import { ChevronRightIcon, ChevronLeftIcon } from "lucide-react";
+
 export type Choice = {
   id: number;
   question_id: number;
@@ -85,8 +88,8 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
   };
 
   return (
-    <div className="flex w-full min-h-screen">
-      <div className="w-7xl m-8">
+    <div className="flex w-full h-screen">
+      <div className="p-8">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -106,45 +109,37 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
           image={loaderData.question.image}
           onAnswerChange={handleAnswerChange}
         />
-        <button
-          onClick={handleSubmit}
-          className="w-full md:w-auto px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded shadow-md transition"
-        >
-          回答を送信
-        </button>
-        {loaderData.prevId ? (
-          <Link
-            to={`/question/${loaderData.prevId}`}
-            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded shadow"
-          >
-            ← 前の問題
-          </Link>
-        ) : (
-          <button
-            disabled
-            className="px-4 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed"
-          >
-            ← 前の問題
-          </button>
-        )}
+        <div className="flex gap-2 justify-center">
+          <Button onClick={handleSubmit}>回答を送信</Button>
+          {loaderData.prevId ? (
+            <Button asChild variant="secondary">
+              <Link to={`/question/${loaderData.prevId}`}>
+                <>
+                  <ChevronLeftIcon /> 前の問題
+                </>
+              </Link>
+            </Button>
+          ) : (
+            <Button disabled variant="secondary">
+              <ChevronLeftIcon />
+              前の問題
+            </Button>
+          )}
 
-        {loaderData.nextId ? (
-          <Link
-            to={`/question/${loaderData.nextId}`}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded shadow"
-          >
-            次の問題 →
-          </Link>
-        ) : (
-          <button
-            disabled
-            className="px-4 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed"
-          >
-            次の問題 →
-          </button>
-        )}
+          {loaderData.nextId ? (
+            <Button asChild variant="secondary">
+              <Link to={`/question/${loaderData.nextId}`}>
+                次の問題 <ChevronRightIcon></ChevronRightIcon>
+              </Link>
+            </Button>
+          ) : (
+            <Button disabled variant="secondary">
+              次の問題 <ChevronRightIcon></ChevronRightIcon>
+            </Button>
+          )}
+        </div>
       </div>
-      <div className="w-lg m-8">
+      <div className="py-8 pr-8 flex-1">
         <Hintarea
           answers={answers}
           questionId={questionId ? Number(questionId) : undefined}
