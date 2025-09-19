@@ -15,7 +15,7 @@ function Choices({ choices }: ChoicesProps) {
     [choices]
   );
   return (
-    <div className="w-xs">
+    <div>
       選択肢
       {sorted.map((word, index) => (
         <div key={index}>

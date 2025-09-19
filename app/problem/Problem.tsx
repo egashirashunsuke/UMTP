@@ -22,8 +22,8 @@ export function Problem({
 }: ProblemProps) {
   return (
     <>
-      <div className="h-90">
-        <section className="mt-8 bg-white shadow rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700 max-w-4xl mx-auto">
+      <div className="p-6">
+        <section className="h-80 bg-white shadow rounded-xl p-6 space-y-2 border border-gray-200 overflow-y-auto">
           <div
             style={{
               whiteSpace: "pre-wrap", // 改行とスペースをそのまま反映
@@ -42,22 +42,20 @@ export function Problem({
           </div>
         </section>
       </div>
-      <div className="display flex align-center justify-center m-8">
-        <section className="bg-white shadow rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-          <img src={image} className="w-full max-w-sm" />
+      <div className="display flex justify-center px-6 pb-6 gap-4 h-80">
+        <section className="flex-1 bg-white shadow rounded-xl p-6 border border-gray-200">
+          <img src={image} className="max-w-full max-h-full object-contain" />
         </section>
-        <div>
-          <section className="bg-white shadow rounded-xl p-6 border border-gray-200 max-w-sm">
-            <Choices choices={choices} />
-          </section>
-          <section className="bg-white shadow rounded-xl p-6 border border-gray-200">
-            <AnswerForm
-              choices={choices}
-              answers={answers}
-              onChange={onAnswerChange}
-            />
-          </section>
-        </div>
+        <section className="bg-white shadow rounded-xl p-6 border border-gray-200 max-w-sm">
+          <Choices choices={choices} />
+        </section>
+        <section className="bg-white shadow rounded-xl p-6 border border-gray-200">
+          <AnswerForm
+            choices={choices}
+            answers={answers}
+            onChange={onAnswerChange}
+          />
+        </section>
       </div>
     </>
   );

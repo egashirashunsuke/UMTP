@@ -18,6 +18,7 @@ function AnswerForm({ choices, answers, onChange }: AnswerFormProps) {
   return (
     <div>
       <div className="flex flex-col gap-1">
+        解答欄
         {sorted.map((_, idx) => {
           const label = String.fromCharCode(97 + idx); // a, b, c...
           return (
