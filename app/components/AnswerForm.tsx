@@ -30,7 +30,7 @@ function AnswerForm({ choices, answers, onChange }: AnswerFormProps) {
               >
                 <option value="">未選択</option>
                 {choices.map((ch) => (
-                  <option key={ch.label} value={`${ch.label}.${ch.text}`}>
+                  <option key={ch.label} value={`${ch.label}`}>
                     {ch.label}. {ch.text}
                   </option>
                 ))}

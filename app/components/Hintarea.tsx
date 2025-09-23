@@ -39,6 +39,7 @@ type HintResponse = {
 };
 
 function Hintarea({ answers, questionId, isReset }: HintareaProps) {
+  const [isAnswerProgressCorrect, setIsAnswerProgressCorrect] = useState(true);
   const [hints, setHints] = useState<string[]>(["まだヒントはありません。"]);
   const [loading, setLoading] = useState(false);
 
@@ -72,13 +73,26 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
       const baseURL = import.meta.env.PROD
         ? "https://umtp-backend-1.onrender.com"
         : "http://localhost:8000";
-      const res = await axios.post<HintResponse>(
-        `${baseURL}/question/${questionId}/hints`,
-        {
-          answers,
-        }
+
+      const checkRes = await axios.post<{ correct: boolean; message?: string }>(
+        `${baseURL}/question/${questionId}/check`,
+        { answers }
       );
-      setHints(res.data.hints);
+
+      if (!checkRes.data.correct) {
+        setIsAnswerProgressCorrect(false);
+        setHints([
+          "現在の回答には誤りがあります。修正してから再度ヒントを要求してください。",
+        ]);
+        return;
+      }
+
+      setIsAnswerProgressCorrect(true);
+      const hintRes = await axios.post<HintResponse>(
+        `${baseURL}/question/${questionId}/hints`,
+        { answers }
+      );
+      setHints(hintRes.data.hints);
     } catch (e) {
       console.error("通信失敗", e);
       setHints(["通信失敗"]);
@@ -135,15 +149,17 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
           </Button>
         </div>
 
-        <div className="mb-3">
-          <Alert variant="destructive">
-            <AlertCircleIcon />
-            <AlertTitle>あなたの現在の回答は間違えがあります。</AlertTitle>
-            <AlertDescription>
-              問題をよく読み、自信のある部分まで回答し、再度ヒントを要求してください。
-            </AlertDescription>
-          </Alert>
-        </div>
+        {isAnswerProgressCorrect === false && (
+          <div className="mb-3">
+            <Alert variant="destructive">
+              <AlertCircleIcon />
+              <AlertTitle>あなたの現在の回答は間違えがあります。</AlertTitle>
+              <AlertDescription>
+                問題をよく読み、自信のある部分まで回答し、再度ヒントを要求してください。
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
 
         <Card className="w-full relative">
           <CardHeader>
