@@ -17,12 +17,15 @@ import {
   Lightbulb,
   BookOpen,
   Target,
+  AlertCircleIcon,
 } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../components/ui/collapsible";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
+
 import { Loader2Icon } from "lucide-react";
 
 type HintareaProps = {
@@ -36,6 +39,7 @@ type HintResponse = {
 };
 
 function Hintarea({ answers, questionId, isReset }: HintareaProps) {
+  const [isAnswerProgressCorrect, setIsAnswerProgressCorrect] = useState(true);
   const [hints, setHints] = useState<string[]>(["まだヒントはありません。"]);
   const [loading, setLoading] = useState(false);
 
@@ -69,13 +73,26 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
       const baseURL = import.meta.env.PROD
         ? "https://umtp-backend-1.onrender.com"
         : "http://localhost:8000";
-      const res = await axios.post<HintResponse>(
-        `${baseURL}/question/${questionId}/hints`,
-        {
-          answers,
-        }
+
+      const checkRes = await axios.post<{ correct: boolean; message?: string }>(
+        `${baseURL}/question/${questionId}/check`,
+        { answers }
       );
-      setHints(res.data.hints);
+
+      if (!checkRes.data.correct) {
+        setIsAnswerProgressCorrect(false);
+        setHints([
+          "現在の回答には誤りがあります。修正してから再度ヒントを要求してください。",
+        ]);
+        return;
+      }
+
+      setIsAnswerProgressCorrect(true);
+      const hintRes = await axios.post<HintResponse>(
+        `${baseURL}/question/${questionId}/hints`,
+        { answers }
+      );
+      setHints(hintRes.data.hints);
     } catch (e) {
       console.error("通信失敗", e);
       setHints(["通信失敗"]);
@@ -112,13 +129,13 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
   const getHintColor = (level: number) => {
     switch (level) {
       case 0:
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+        return "bg-green-100 text-green-800";
       case 1:
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+        return "bg-yellow-100 text-yellow-800";
       case 2:
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+        return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -131,6 +148,18 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
             {loading && <Loader2Icon className="animate-spin" />}
           </Button>
         </div>
+
+        {isAnswerProgressCorrect === false && (
+          <div className="mb-3">
+            <Alert variant="destructive">
+              <AlertCircleIcon />
+              <AlertTitle>あなたの現在の回答は間違えがあります。</AlertTitle>
+              <AlertDescription>
+                問題をよく読み、自信のある部分まで回答し、再度ヒントを要求してください。
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
 
         <Card className="w-full relative">
           <CardHeader>
