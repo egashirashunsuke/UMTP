@@ -8,7 +8,6 @@ type LogParams = {
   event_name: string;
   answers: Answers | undefined;
   seenHints: number[];
-  openHints: number[];
   hints: string[];
 };
 
@@ -18,20 +17,21 @@ export async function sendLog({
   event_name,
   answers,
   seenHints,
-  openHints,
   hints,
 }: LogParams) {
   const deviceId =
     localStorage.getItem("device_id") || "123e4567-e89b-12d3-a456-426614174000";
+
+  const hint_open_status = Object.fromEntries(
+    hints.map((_, i) => [i + 1, seenHints.includes(i)])
+  );
 
   const logData = {
     device_id: deviceId,
     question_id: questionId,
     event_name: event_name,
     answers: answers,
-    hint_open_status: Object.fromEntries(
-      seenHints.map((i) => [i + 1, openHints.includes(i)])
-    ),
+    hint_open_status: hint_open_status,
     hints: Object.fromEntries(hints.map((h, i) => [i + 1, h])),
     timestamp: new Date().toISOString(),
   };

@@ -45,26 +45,30 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
   const [hints, setHints] = useState<string[]>(["まだヒントはありません。"]);
   const [loading, setLoading] = useState(false);
 
-  const [openHints, setOpenHints] = useState<number[]>([]);
-  const [seenHints, setSeenHints] = useState<number[]>([]);
+  const [nowOpenHints, setNowOpenHints] = useState<number[]>([]);
+  const [everOpenHints, setEverOpenHints] = useState<number[]>([]);
 
   useEffect(() => {
-    const saved = sessionStorage.getItem(`seenHints-${questionId}`);
-    if (saved) {
-      setSeenHints(JSON.parse(saved));
+    if (questionId != null) {
+      const saved = sessionStorage.getItem(`seenHints-${questionId}`);
+      if (saved) {
+        setEverOpenHints(JSON.parse(saved));
+      } else {
+        setEverOpenHints([]);
+      }
     }
   }, [questionId]);
 
   useEffect(() => {
     sessionStorage.setItem(
       `seenHints-${questionId}`,
-      JSON.stringify(seenHints)
+      JSON.stringify(everOpenHints)
     );
-  }, [seenHints, questionId]);
+  }, [everOpenHints, questionId]);
 
   useEffect(() => {
     if (isReset && questionId != null) {
-      setSeenHints([]);
+      setEverOpenHints([]);
       sessionStorage.removeItem(`seenHints-${questionId}`);
     }
   }, [isReset, questionId]);
@@ -101,8 +105,7 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
         questionId,
         event_name: "hint_request",
         answers,
-        seenHints,
-        openHints,
+        seenHints: everOpenHints,
         hints: hintRes.data.hints,
       });
     } catch (e) {
@@ -114,14 +117,14 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
   };
 
   const toggleHint = async (hintIndex: number) => {
-    setOpenHints((prev) =>
+    setNowOpenHints((prev) =>
       prev.includes(hintIndex)
         ? prev.filter((index) => index !== hintIndex)
         : [...prev, hintIndex]
     );
 
-    if (!seenHints.includes(hintIndex)) {
-      setSeenHints((prev) => [...prev, hintIndex]);
+    if (!everOpenHints.includes(hintIndex)) {
+      setEverOpenHints((prev) => [...prev, hintIndex]);
     }
     const baseURL = import.meta.env.PROD
       ? "https://umtp-backend-1.onrender.com"
@@ -129,10 +132,9 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
     await sendLog({
       baseURL,
       questionId,
-      event_name: "hint_request",
+      event_name: `open_hint_level_${hintIndex + 1}`,
       answers,
-      seenHints,
-      openHints,
+      seenHints: everOpenHints,
       hints: hints,
     });
   };
@@ -199,7 +201,7 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
             {hints.map((hint, index) => (
               <div key={index}>
                 <Collapsible
-                  open={openHints.includes(index)}
+                  open={nowOpenHints.includes(index)}
                   onOpenChange={() => toggleHint(index)}
                 >
                   <CollapsibleTrigger asChild>
@@ -220,15 +222,17 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
                         <Badge
                           variant="outline"
                           className={`ml-2 ${
-                            seenHints.includes(index)
+                            everOpenHints.includes(index)
                               ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
                               : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
                           }`}
                         >
-                          {seenHints.includes(index) ? "開封済み" : "未開封"}
+                          {everOpenHints.includes(index)
+                            ? "開封済み"
+                            : "未開封"}
                         </Badge>
                       </div>
-                      {openHints.includes(index) ? (
+                      {nowOpenHints.includes(index) ? (
                         <ChevronDown className="h-4 w-4" />
                       ) : (
                         <ChevronRight className="h-4 w-4" />
