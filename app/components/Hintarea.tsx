@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import type { Answers } from "~/routes/home";
 import {
   Card,
   CardHeader,
@@ -27,6 +26,9 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 
 import { Loader2Icon } from "lucide-react";
+import { sendLog } from "~/utils/logging";
+
+export type Answers = { [key: string]: string };
 
 type HintareaProps = {
   answers?: Answers;
@@ -93,6 +95,16 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
         { answers }
       );
       setHints(hintRes.data.hints);
+
+      await sendLog({
+        baseURL,
+        questionId,
+        event_name: "hint_request",
+        answers,
+        seenHints,
+        openHints,
+        hints: hintRes.data.hints,
+      });
     } catch (e) {
       console.error("通信失敗", e);
       setHints(["通信失敗"]);
@@ -101,7 +113,7 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
     }
   };
 
-  const toggleHint = (hintIndex: number) => {
+  const toggleHint = async (hintIndex: number) => {
     setOpenHints((prev) =>
       prev.includes(hintIndex)
         ? prev.filter((index) => index !== hintIndex)
@@ -111,6 +123,18 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
     if (!seenHints.includes(hintIndex)) {
       setSeenHints((prev) => [...prev, hintIndex]);
     }
+    const baseURL = import.meta.env.PROD
+      ? "https://umtp-backend-1.onrender.com"
+      : "http://localhost:8000";
+    await sendLog({
+      baseURL,
+      questionId,
+      event_name: "hint_request",
+      answers,
+      seenHints,
+      openHints,
+      hints: hints,
+    });
   };
 
   const getHintIcon = (level: number) => {
