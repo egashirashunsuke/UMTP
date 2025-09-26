@@ -14,6 +14,7 @@ import {
 } from "../components/ui/breadcrumb";
 import { Button } from "../components/ui/button";
 import { ChevronRightIcon, ChevronLeftIcon } from "lucide-react";
+import { sendLog } from "~/utils/logging";
 
 export type Choice = {
   id: number;
@@ -77,17 +78,30 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
       ])
     )
   );
-  const [hints, setHints] = useState<string[]>(["まだヒントはありません。"]);
+  const [hints, setHints] = useState<string[]>([]);
   const [everOpenHints, setEverOpenHints] = useState<number[]>([]);
 
-  const handleAnswerChange = (label: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [label]: value }));
+  const handleAnswerChange = async (label: string, value: string) => {
+    const newAnswers = { ...answers, [label]: value };
+    setAnswers(newAnswers);
+    const baseURL = import.meta.env.PROD
+      ? "https://umtp-backend-1.onrender.com"
+      : "http://localhost:8000";
+    await sendLog({
+      baseURL,
+      questionId: questionId ? Number(questionId) : undefined,
+      event_name: `answer_change`,
+      answers: newAnswers,
+      seenHints: everOpenHints,
+      hints: hints,
+    });
   };
 
   const handleSubmit = () => {
     console.log("回答送信:", answers);
     setEverOpenHints([]);
     sessionStorage.removeItem(`seenHints-${questionId}`);
+    setHints([]);
   };
 
   return (
