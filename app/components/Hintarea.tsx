@@ -214,6 +214,7 @@ function Hintarea({
               <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-gray-400">
                 <p className="text-gray-600 dark:text-gray-300">
                   まだヒントは生成されていません。
+                  <br />
                   「ヒントを要求する」ボタンを押してください。
                 </p>
               </div>
