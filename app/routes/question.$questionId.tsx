@@ -12,6 +12,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../components/ui/breadcrumb";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../components/ui/alert-dialog";
 import { Button } from "../components/ui/button";
 import { ChevronRightIcon, ChevronLeftIcon } from "lucide-react";
 import { sendLog } from "~/utils/logging";
@@ -127,7 +138,25 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
           onAnswerChange={handleAnswerChange}
         />
         <div className="flex gap-2 justify-center">
-          <Button onClick={handleSubmit}>回答を送信</Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button>回答を送信</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>回答を送信しますか?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  回答を送信すると，現在の回答内容が保存されます。よろしいですか？
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                <AlertDialogAction onClick={handleSubmit}>
+                  送信
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           {loaderData.prevId ? (
             <Button asChild variant="secondary">
               <Link to={`/question/${loaderData.prevId}`}>
