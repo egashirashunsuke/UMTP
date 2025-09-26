@@ -77,8 +77,8 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
       ])
     )
   );
-  const [isReset, setIsReset] = useState(false);
   const [hints, setHints] = useState<string[]>(["まだヒントはありません。"]);
+  const [everOpenHints, setEverOpenHints] = useState<number[]>([]);
 
   const handleAnswerChange = (label: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [label]: value }));
@@ -86,7 +86,8 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
 
   const handleSubmit = () => {
     console.log("回答送信:", answers);
-    setIsReset(true);
+    setEverOpenHints([]);
+    sessionStorage.removeItem(`seenHints-${questionId}`);
   };
 
   return (
@@ -147,6 +148,8 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
           questionId={questionId ? Number(questionId) : undefined}
           hints={hints}
           setHints={setHints}
+          everOpenHints={everOpenHints}
+          setEverOpenHints={setEverOpenHints}
         />
       </div>
     </div>

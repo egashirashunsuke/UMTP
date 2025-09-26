@@ -33,9 +33,10 @@ export type Answers = { [key: string]: string };
 type HintareaProps = {
   answers?: Answers;
   questionId?: number;
-  isReset?: boolean;
   hints: string[];
   setHints: React.Dispatch<React.SetStateAction<string[]>>;
+  everOpenHints: number[];
+  setEverOpenHints: React.Dispatch<React.SetStateAction<number[]>>;
 };
 
 type HintResponse = {
@@ -45,15 +46,15 @@ type HintResponse = {
 function Hintarea({
   answers,
   questionId,
-  isReset,
   hints,
   setHints,
+  everOpenHints,
+  setEverOpenHints,
 }: HintareaProps) {
   const [isAnswerProgressCorrect, setIsAnswerProgressCorrect] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const [nowOpenHints, setNowOpenHints] = useState<number[]>([]);
-  const [everOpenHints, setEverOpenHints] = useState<number[]>([]);
 
   useEffect(() => {
     if (questionId != null) {
@@ -74,11 +75,11 @@ function Hintarea({
   }, [everOpenHints, questionId]);
 
   useEffect(() => {
-    if (isReset && questionId != null) {
+    if (questionId != null) {
       setEverOpenHints([]);
       sessionStorage.removeItem(`seenHints-${questionId}`);
     }
-  }, [isReset, questionId]);
+  }, [questionId]);
 
   const createHint = async () => {
     setLoading(true);
