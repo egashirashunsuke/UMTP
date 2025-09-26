@@ -34,15 +34,22 @@ type HintareaProps = {
   answers?: Answers;
   questionId?: number;
   isReset?: boolean;
+  hints: string[];
+  setHints: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 type HintResponse = {
   hints: string[];
 };
 
-function Hintarea({ answers, questionId, isReset }: HintareaProps) {
+function Hintarea({
+  answers,
+  questionId,
+  isReset,
+  hints,
+  setHints,
+}: HintareaProps) {
   const [isAnswerProgressCorrect, setIsAnswerProgressCorrect] = useState(true);
-  const [hints, setHints] = useState<string[]>(["まだヒントはありません。"]);
   const [loading, setLoading] = useState(false);
 
   const [nowOpenHints, setNowOpenHints] = useState<number[]>([]);

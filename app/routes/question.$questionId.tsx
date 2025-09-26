@@ -78,6 +78,8 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
     )
   );
   const [isReset, setIsReset] = useState(false);
+  const [hints, setHints] = useState<string[]>(["まだヒントはありません。"]);
+
   const handleAnswerChange = (label: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [label]: value }));
   };
@@ -143,6 +145,8 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
         <Hintarea
           answers={answers}
           questionId={questionId ? Number(questionId) : undefined}
+          hints={hints}
+          setHints={setHints}
         />
       </div>
     </div>
