@@ -23,7 +23,16 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../components/ui/collapsible";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "../components/ui/tooltip";
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
+import { HiOutlineHandThumbUp } from "react-icons/hi2";
+import { HiOutlineHandThumbDown } from "react-icons/hi2";
+import { HiMiniHandThumbUp } from "react-icons/hi2";
+import { HiMiniHandThumbDown } from "react-icons/hi2";
 
 import { Loader2Icon } from "lucide-react";
 import { sendLog } from "~/utils/logging";
@@ -53,8 +62,10 @@ function Hintarea({
 }: HintareaProps) {
   const [isAnswerProgressCorrect, setIsAnswerProgressCorrect] = useState(true);
   const [loading, setLoading] = useState(false);
-
   const [nowOpenHints, setNowOpenHints] = useState<number[]>([]);
+  const [feedback, setFeedback] = useState<
+    Record<number, "up" | "down" | null>
+  >({});
 
   useEffect(() => {
     if (questionId != null) {
@@ -151,6 +162,26 @@ function Hintarea({
     });
   };
 
+  const handleFeedback = (hintIndex: number, type: "up" | "down") => {
+    setFeedback((prev) => ({
+      ...prev,
+      [hintIndex]: prev[hintIndex] === type ? null : type,
+    }));
+
+    const baseURL = import.meta.env.PROD
+      ? "https://umtp-backend-1.onrender.com"
+      : "http://localhost:8000";
+
+    sendLog({
+      baseURL,
+      questionId,
+      event_name: `feedback_${type}_level_${hintIndex + 1}`,
+      answers,
+      seenHints: everOpenHints,
+      hints,
+    });
+  };
+
   const getHintIcon = (level: number) => {
     switch (level) {
       case 0:
@@ -211,8 +242,8 @@ function Hintarea({
           </CardHeader>
           <CardContent className="space-y-4 w-sm">
             {hints.length === 0 ? (
-              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-gray-400">
-                <p className="text-gray-600 dark:text-gray-300">
+              <div className="p-4 bg-gray-50 rounded-lg border-l-4 border-gray-400">
+                <p className="text-gray-600">
                   まだヒントは生成されていません。
                   <br />
                   「ヒントを要求する」ボタンを押してください。
@@ -262,11 +293,43 @@ function Hintarea({
                         )}
                       </Button>
                     </CollapsibleTrigger>
-                    <CollapsibleContent className="px-4 pb-4">
+                    <CollapsibleContent className="px-4">
                       <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-blue-500">
                         <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                           {hint}
                         </p>
+                      </div>
+                      <div className="flex gap-2 p-2">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button onClick={() => handleFeedback(index, "up")}>
+                              {feedback[index] === "up" ? (
+                                <HiMiniHandThumbUp size={18} />
+                              ) : (
+                                <HiOutlineHandThumbUp size={18} />
+                              )}
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom">
+                            <p>良いヒントです</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => handleFeedback(index, "down")}
+                            >
+                              {feedback[index] === "down" ? (
+                                <HiMiniHandThumbDown size={18} />
+                              ) : (
+                                <HiOutlineHandThumbDown size={18} />
+                              )}
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom">
+                            <p>良くないヒントです</p>
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
                     </CollapsibleContent>
                   </Collapsible>
