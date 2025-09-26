@@ -106,9 +106,6 @@ function Hintarea({
 
       if (!checkRes.data.correct) {
         setIsAnswerProgressCorrect(false);
-        setHints([
-          "現在の回答には誤りがあります。修正してから再度ヒントを要求してください。",
-        ]);
         return;
       }
 
