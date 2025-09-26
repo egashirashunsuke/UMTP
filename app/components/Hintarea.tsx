@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import type { Answers } from "~/routes/home";
 import {
   Card,
   CardHeader,
@@ -27,45 +26,60 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 
 import { Loader2Icon } from "lucide-react";
+import { sendLog } from "~/utils/logging";
+
+export type Answers = { [key: string]: string };
 
 type HintareaProps = {
   answers?: Answers;
   questionId?: number;
-  isReset?: boolean;
+  hints: string[];
+  setHints: React.Dispatch<React.SetStateAction<string[]>>;
+  everOpenHints: number[];
+  setEverOpenHints: React.Dispatch<React.SetStateAction<number[]>>;
 };
 
 type HintResponse = {
   hints: string[];
 };
 
-function Hintarea({ answers, questionId, isReset }: HintareaProps) {
+function Hintarea({
+  answers,
+  questionId,
+  hints,
+  setHints,
+  everOpenHints,
+  setEverOpenHints,
+}: HintareaProps) {
   const [isAnswerProgressCorrect, setIsAnswerProgressCorrect] = useState(true);
-  const [hints, setHints] = useState<string[]>(["まだヒントはありません。"]);
   const [loading, setLoading] = useState(false);
 
-  const [openHints, setOpenHints] = useState<number[]>([]);
-  const [seenHints, setSeenHints] = useState<number[]>([]);
+  const [nowOpenHints, setNowOpenHints] = useState<number[]>([]);
 
   useEffect(() => {
-    const saved = sessionStorage.getItem(`seenHints-${questionId}`);
-    if (saved) {
-      setSeenHints(JSON.parse(saved));
+    if (questionId != null) {
+      const saved = sessionStorage.getItem(`seenHints-${questionId}`);
+      if (saved) {
+        setEverOpenHints(JSON.parse(saved));
+      } else {
+        setEverOpenHints([]);
+      }
     }
   }, [questionId]);
 
   useEffect(() => {
     sessionStorage.setItem(
       `seenHints-${questionId}`,
-      JSON.stringify(seenHints)
+      JSON.stringify(everOpenHints)
     );
-  }, [seenHints, questionId]);
+  }, [everOpenHints, questionId]);
 
   useEffect(() => {
-    if (isReset && questionId != null) {
-      setSeenHints([]);
+    if (questionId != null) {
+      setEverOpenHints([]);
       sessionStorage.removeItem(`seenHints-${questionId}`);
     }
-  }, [isReset, questionId]);
+  }, [questionId]);
 
   const createHint = async () => {
     setLoading(true);
@@ -93,6 +107,15 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
         { answers }
       );
       setHints(hintRes.data.hints);
+
+      await sendLog({
+        baseURL,
+        questionId,
+        event_name: "hint_request",
+        answers,
+        seenHints: everOpenHints,
+        hints: hintRes.data.hints,
+      });
     } catch (e) {
       console.error("通信失敗", e);
       setHints(["通信失敗"]);
@@ -101,16 +124,31 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
     }
   };
 
-  const toggleHint = (hintIndex: number) => {
-    setOpenHints((prev) =>
+  const toggleHint = async (hintIndex: number) => {
+    setNowOpenHints((prev) =>
       prev.includes(hintIndex)
         ? prev.filter((index) => index !== hintIndex)
         : [...prev, hintIndex]
     );
 
-    if (!seenHints.includes(hintIndex)) {
-      setSeenHints((prev) => [...prev, hintIndex]);
+    let newEverOpenHints = everOpenHints;
+    if (!everOpenHints.includes(hintIndex)) {
+      newEverOpenHints = [...everOpenHints, hintIndex];
+      setEverOpenHints(newEverOpenHints);
     }
+
+    const baseURL = import.meta.env.PROD
+      ? "https://umtp-backend-1.onrender.com"
+      : "http://localhost:8000";
+
+    await sendLog({
+      baseURL,
+      questionId,
+      event_name: `open_hint_level_${hintIndex + 1}`,
+      answers,
+      seenHints: newEverOpenHints,
+      hints: hints,
+    });
   };
 
   const getHintIcon = (level: number) => {
@@ -171,57 +209,71 @@ function Hintarea({ answers, questionId, isReset }: HintareaProps) {
               必要に応じてヒントを確認してください。ヒントはレベルが上がるにつれ，段階的に詳しくなります。
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {hints.map((hint, index) => (
-              <div key={index}>
-                <Collapsible
-                  open={openHints.includes(index)}
-                  onOpenChange={() => toggleHint(index)}
-                >
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-between p-4 h-auto text-left hover:bg-gray-100 dark:hover:bg-gray-800"
-                    >
-                      <div className="flex items-center gap-3">
-                        {getHintIcon(index)}
-                        <span className="font-medium">レベル {index + 1}</span>
-                        <Badge className={getHintColor(index)}>
-                          {index === 0
-                            ? "方向付け"
-                            : index === 1
-                            ? "部分解答"
-                            : "手順ガイド"}
-                        </Badge>
-                        <Badge
-                          variant="outline"
-                          className={`ml-2 ${
-                            seenHints.includes(index)
-                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-                              : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                          }`}
-                        >
-                          {seenHints.includes(index) ? "開封済み" : "未開封"}
-                        </Badge>
-                      </div>
-                      {openHints.includes(index) ? (
-                        <ChevronDown className="h-4 w-4" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="px-4 pb-4">
-                    <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-blue-500">
-                      <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                        {hint}
-                      </p>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-                {index < hints.length - 1 && <Separator className="mt-4" />}
+          <CardContent className="space-y-4 w-sm">
+            {hints.length === 0 ? (
+              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-gray-400">
+                <p className="text-gray-600 dark:text-gray-300">
+                  まだヒントは生成されていません。
+                  <br />
+                  「ヒントを要求する」ボタンを押してください。
+                </p>
               </div>
-            ))}
+            ) : (
+              hints.map((hint, index) => (
+                <div key={index}>
+                  <Collapsible
+                    open={nowOpenHints.includes(index)}
+                    onOpenChange={() => toggleHint(index)}
+                  >
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-between p-4 h-auto text-left hover:bg-gray-100 dark:hover:bg-gray-800"
+                      >
+                        <div className="flex items-center gap-3">
+                          {getHintIcon(index)}
+                          <span className="font-medium">
+                            レベル {index + 1}
+                          </span>
+                          <Badge className={getHintColor(index)}>
+                            {index === 0
+                              ? "方向付け"
+                              : index === 1
+                              ? "部分解答"
+                              : "手順ガイド"}
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className={`ml-2 ${
+                              everOpenHints.includes(index)
+                                ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                                : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                            }`}
+                          >
+                            {everOpenHints.includes(index)
+                              ? "開封済み"
+                              : "未開封"}
+                          </Badge>
+                        </div>
+                        {nowOpenHints.includes(index) ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="px-4 pb-4">
+                      <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-blue-500">
+                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                          {hint}
+                        </p>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                  {index < hints.length - 1 && <Separator className="mt-4" />}
+                </div>
+              ))
+            )}
           </CardContent>
 
           {loading && (

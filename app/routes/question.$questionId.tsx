@@ -12,8 +12,20 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../components/ui/breadcrumb";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../components/ui/alert-dialog";
 import { Button } from "../components/ui/button";
 import { ChevronRightIcon, ChevronLeftIcon } from "lucide-react";
+import { sendLog } from "~/utils/logging";
 
 export type Choice = {
   id: number;
@@ -77,14 +89,30 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
       ])
     )
   );
-  const [isReset, setIsReset] = useState(false);
-  const handleAnswerChange = (label: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [label]: value }));
+  const [hints, setHints] = useState<string[]>([]);
+  const [everOpenHints, setEverOpenHints] = useState<number[]>([]);
+
+  const handleAnswerChange = async (label: string, value: string) => {
+    const newAnswers = { ...answers, [label]: value };
+    setAnswers(newAnswers);
+    const baseURL = import.meta.env.PROD
+      ? "https://umtp-backend-1.onrender.com"
+      : "http://localhost:8000";
+    await sendLog({
+      baseURL,
+      questionId: questionId ? Number(questionId) : undefined,
+      event_name: `answer_change`,
+      answers: newAnswers,
+      seenHints: everOpenHints,
+      hints: hints,
+    });
   };
 
   const handleSubmit = () => {
     console.log("回答送信:", answers);
-    setIsReset(true);
+    setEverOpenHints([]);
+    sessionStorage.removeItem(`seenHints-${questionId}`);
+    setHints([]);
   };
 
   return (
@@ -110,7 +138,25 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
           onAnswerChange={handleAnswerChange}
         />
         <div className="flex gap-2 justify-center">
-          <Button onClick={handleSubmit}>回答を送信</Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button>回答を送信</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>回答を送信しますか?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  回答を送信すると，現在の回答内容が保存されます。よろしいですか？
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                <AlertDialogAction onClick={handleSubmit}>
+                  送信
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           {loaderData.prevId ? (
             <Button asChild variant="secondary">
               <Link to={`/question/${loaderData.prevId}`}>
@@ -143,6 +189,10 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
         <Hintarea
           answers={answers}
           questionId={questionId ? Number(questionId) : undefined}
+          hints={hints}
+          setHints={setHints}
+          everOpenHints={everOpenHints}
+          setEverOpenHints={setEverOpenHints}
         />
       </div>
     </div>
