@@ -25,6 +25,7 @@ function AnswerForm({ choices, answers, onChange }: AnswerFormProps) {
             <div key={label}>
               {label}：
               <select
+                className="w-24 truncate"
                 value={answers[label] ?? ""}
                 onChange={(e) => onChange(label, e.target.value)}
               >
