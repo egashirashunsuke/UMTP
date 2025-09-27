@@ -24,7 +24,7 @@ export function Problem({
   return (
     <>
       <div className="p-6">
-        <section className="h-80 bg-white shadow rounded-xl p-6 space-y-2 border border-gray-200 overflow-y-auto">
+        <section className="max-h-80 bg-white shadow rounded-xl p-6 space-y-2 border border-gray-200 overflow-y-auto">
           <div
             style={{
               whiteSpace: "pre-wrap", // 改行とスペースをそのまま反映
@@ -64,10 +64,10 @@ export function Problem({
             </TransformComponent>
           </TransformWrapper>
         </section>
-        <section className="bg-white shadow rounded-xl p-6 border border-gray-200 max-w-sm">
+        <section className="bg-white shadow rounded-xl p-6 border border-gray-200 max-w-sm overflow-y-auto">
           <Choices choices={choices} />
         </section>
-        <section className="bg-white shadow rounded-xl p-6 border border-gray-200">
+        <section className="bg-white shadow rounded-xl p-6 border border-gray-200 overflow-y-auto">
           <AnswerForm
             choices={choices}
             answers={answers}
