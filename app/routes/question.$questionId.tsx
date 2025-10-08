@@ -110,6 +110,16 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
 
   const handleSubmit = () => {
     console.log("回答送信:", answers);
+    sendLog({
+      baseURL: import.meta.env.PROD
+        ? "https://umtp-backend-1.onrender.com"
+        : "http://localhost:8000",
+      questionId: questionId ? Number(questionId) : undefined,
+      event_name: "submit_answer",
+      answers: answers,
+      seenHints: everOpenHints,
+      hints: hints,
+    });
     setEverOpenHints([]);
     sessionStorage.removeItem(`seenHints-${questionId}`);
     setHints([]);
