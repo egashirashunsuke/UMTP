@@ -1,6 +1,9 @@
 import { NavLink } from "react-router";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Header = () => {
+  const { loginWithRedirect } = useAuth0();
+
   return (
     <header className="bg-white shadow-md h-14 flex items-center px-6">
       {/* 左側：ロゴ */}
@@ -38,18 +41,8 @@ const Header = () => {
         </ul>
       </nav>
 
-      {/* 右側：ログイン */}
       <div className="ml-auto">
-        <NavLink
-          to="/login"
-          className={({ isActive }) =>
-            isActive
-              ? "px-3 py-2 rounded bg-gray-100 text-gray-900 font-semibold"
-              : "px-3 py-2 rounded text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-          }
-        >
-          ログイン
-        </NavLink>
+        <button onClick={() => loginWithRedirect()}>Log In</button>
       </div>
     </header>
   );
