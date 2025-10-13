@@ -10,6 +10,11 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import Header from "./components/Header";
+import { Auth0Provider } from "@auth0/auth0-react";
+
+const domain = "dev-55s6i56praqrjrxk.us.auth0.com";
+const clientId = "WAtTTAdOQ99lacUikbSlhaYvsZ6RuTKL";
+const redirectUri = typeof window !== "undefined" ? window.location.origin : "";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -34,7 +39,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Header />
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -44,7 +48,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <Auth0Provider
+      domain={domain}
+      clientId={clientId}
+      authorizationParams={{
+        redirect_uri: redirectUri,
+      }}
+    >
+      <Header />
+      <Outlet />
+    </Auth0Provider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
