@@ -62,7 +62,6 @@ function Hintarea({
 }: HintareaProps) {
   const [isAnswerProgressCorrect, setIsAnswerProgressCorrect] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [nowOpenHints, setNowOpenHints] = useState<number[]>([]);
   const [feedback, setFeedback] = useState<
     Record<number, "up" | "down" | null>
   >({});
@@ -133,17 +132,15 @@ function Hintarea({
   };
 
   const toggleHint = async (hintIndex: number) => {
-    setNowOpenHints((prev) =>
-      prev.includes(hintIndex)
-        ? prev.filter((index) => index !== hintIndex)
-        : [...prev, hintIndex]
-    );
+    if (everOpenHints.includes(hintIndex)) return;
 
-    let newEverOpenHints = everOpenHints;
-    if (!everOpenHints.includes(hintIndex)) {
-      newEverOpenHints = [...everOpenHints, hintIndex];
-      setEverOpenHints(newEverOpenHints);
+    if (hintIndex > 0 && !everOpenHints.includes(hintIndex - 1)) {
+      console.log("前のレベルを先に開けてください");
+      return;
     }
+
+    const newEverOpenHints = [...everOpenHints, hintIndex];
+    setEverOpenHints(newEverOpenHints);
 
     const baseURL = import.meta.env.PROD
       ? "https://umtp-backend-1.onrender.com"
@@ -237,7 +234,7 @@ function Hintarea({
               必要に応じてヒントを確認してください。ヒントはレベルが上がるにつれ，段階的に詳しくなります。
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 w-sm">
+          <CardContent className="space-y-4 w-md">
             {hints.length === 0 ? (
               <div className="p-4 bg-gray-50 rounded-lg border-l-4 border-gray-400">
                 <p className="text-gray-600">
@@ -250,7 +247,7 @@ function Hintarea({
               hints.map((hint, index) => (
                 <div key={index}>
                   <Collapsible
-                    open={nowOpenHints.includes(index)}
+                    open={everOpenHints.includes(index)}
                     onOpenChange={() => toggleHint(index)}
                   >
                     <CollapsibleTrigger asChild>
@@ -283,7 +280,7 @@ function Hintarea({
                               : "未開封"}
                           </Badge>
                         </div>
-                        {nowOpenHints.includes(index) ? (
+                        {everOpenHints.includes(index) ? (
                           <ChevronDown className="h-4 w-4" />
                         ) : (
                           <ChevronRight className="h-4 w-4" />
