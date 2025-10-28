@@ -16,6 +16,16 @@ const Header = () => {
         <ul className="flex space-x-2">
           <li>
             <NavLink
+              to="/tutorial"
+              className={({ isActive }) =>
+                isActive
+                  ? "px-3 py-2 rounded bg-gray-100 text-gray-900 font-semibold"
+                  : "px-3 py-2 rounded text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+              }
+            >
+              チュートリアル
+            </NavLink>
+            <NavLink
               to="/questions"
               className={({ isActive }) =>
                 isActive
@@ -42,7 +52,7 @@ const Header = () => {
       </nav>
 
       <div className="ml-auto">
-        <button onClick={() => loginWithRedirect()}>Log In</button>
+        <button onClick={() => loginWithRedirect()}>ログイン</button>
       </div>
     </header>
   );
