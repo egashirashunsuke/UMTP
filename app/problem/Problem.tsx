@@ -23,7 +23,7 @@ export function Problem({
 }: ProblemProps) {
   return (
     <>
-      <div className="p-6">
+      <div className="py-6 pl-6">
         <section className="max-h-80 bg-white shadow rounded-xl p-6 space-y-2 border border-gray-200 overflow-y-auto">
           <div
             style={{
@@ -43,7 +43,7 @@ export function Problem({
           </div>
         </section>
       </div>
-      <div className="display flex justify-center px-6 pb-6 gap-4 h-80">
+      <div className="display flex justify-center pl-6 pb-6 gap-4 h-80">
         <section className="flex-1 justify-center flex items-center bg-white shadow rounded-xl p-2 border border-gray-200 overflow-hidden">
           <TransformWrapper limitToBounds={false} minScale={0.01}>
             <TransformComponent
