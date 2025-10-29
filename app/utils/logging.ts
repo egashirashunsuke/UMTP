@@ -9,6 +9,9 @@ type LogParams = {
   answers: Answers | undefined;
   seenHints: number[];
   hints: string[];
+  hintIndex?: number;
+  useful?: number;
+  comment?: string;
 };
 
 export async function sendLog({
@@ -18,6 +21,9 @@ export async function sendLog({
   answers,
   seenHints,
   hints,
+  hintIndex,
+  useful,
+  comment,
 }: LogParams) {
   const deviceId =
     localStorage.getItem("device_id") || "123e4567-e89b-12d3-a456-426614174000";
@@ -33,6 +39,9 @@ export async function sendLog({
     answers: answers,
     hint_open_status: hint_open_status,
     hints: Object.fromEntries(hints.map((h, i) => [i + 1, h])),
+    hintIndex,
+    useful,
+    comment,
     timestamp: new Date().toISOString(),
   };
 

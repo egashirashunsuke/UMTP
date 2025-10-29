@@ -23,19 +23,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../components/ui/collapsible";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "../components/ui/tooltip";
+
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
-import { HiOutlineHandThumbUp } from "react-icons/hi2";
-import { HiOutlineHandThumbDown } from "react-icons/hi2";
-import { HiMiniHandThumbUp } from "react-icons/hi2";
-import { HiMiniHandThumbDown } from "react-icons/hi2";
 
 import { Loader2Icon } from "lucide-react";
 import { sendLog } from "~/utils/logging";
+import { LikertSlider } from "./LikertSlider";
 
 export type Answers = { [key: string]: string };
 
@@ -62,9 +55,8 @@ function Hintarea({
 }: HintareaProps) {
   const [isAnswerProgressCorrect, setIsAnswerProgressCorrect] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState<
-    Record<number, "up" | "down" | null>
-  >({});
+  const [useful, setUseful] = useState<number>(3);
+  const [comment, setComment] = useState("");
 
   useEffect(() => {
     if (questionId != null) {
@@ -156,12 +148,11 @@ function Hintarea({
     });
   };
 
-  const handleFeedback = (hintIndex: number, type: "up" | "down") => {
-    setFeedback((prev) => ({
-      ...prev,
-      [hintIndex]: prev[hintIndex] === type ? null : type,
-    }));
-
+  const handleSubmit = (hintIndex: number) => {
+    if (useful === null) {
+      alert("評価を選択してください！");
+      return;
+    }
     const baseURL = import.meta.env.PROD
       ? "https://umtp-backend-1.onrender.com"
       : "http://localhost:8000";
@@ -169,11 +160,17 @@ function Hintarea({
     sendLog({
       baseURL,
       questionId,
-      event_name: `feedback_${type}_level_${hintIndex + 1}`,
+      event_name: `feedback_level_${hintIndex + 1}`,
       answers,
       seenHints: everOpenHints,
       hints,
+      hintIndex,
+      useful,
+      comment,
     });
+    setUseful(3);
+    setComment("");
+    alert("✅ 評価を送信しました！");
   };
 
   const getHintIcon = (level: number) => {
@@ -257,9 +254,7 @@ function Hintarea({
                       >
                         <div className="flex items-center gap-3">
                           {getHintIcon(index)}
-                          <span className="font-medium">
-                            レベル {index + 1}
-                          </span>
+                          <span className="font-bold">レベル {index + 1}</span>
                           <Badge className={getHintColor(index)}>
                             {index === 0
                               ? "方向付け"
@@ -287,43 +282,29 @@ function Hintarea({
                         )}
                       </Button>
                     </CollapsibleTrigger>
-                    <CollapsibleContent className="px-4">
+                    <CollapsibleContent className="px-4 space-y-4">
                       <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-blue-500">
                         <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                           {hint}
                         </p>
                       </div>
-                      <div className="flex gap-2 p-2">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <button onClick={() => handleFeedback(index, "up")}>
-                              {feedback[index] === "up" ? (
-                                <HiMiniHandThumbUp size={18} />
-                              ) : (
-                                <HiOutlineHandThumbUp size={18} />
-                              )}
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent side="bottom">
-                            <p>良いヒントです</p>
-                          </TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <button
-                              onClick={() => handleFeedback(index, "down")}
-                            >
-                              {feedback[index] === "down" ? (
-                                <HiMiniHandThumbDown size={18} />
-                              ) : (
-                                <HiOutlineHandThumbDown size={18} />
-                              )}
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent side="bottom">
-                            <p>良くないヒントです</p>
-                          </TooltipContent>
-                        </Tooltip>
+                      <div className="p-4 border shadow-sm bg-white space-y-2">
+                        <LikertSlider
+                          question="このヒントは役に立ちましたか？"
+                          value={useful}
+                          onChange={setUseful}
+                        />
+                        <textarea
+                          placeholder="上記の評価の理由をご記入ください。"
+                          className="w-full h-20 p-2 border text-sm focus:ring-blue-400 focus:border-blue-400"
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                        />
+                        <div className="flex justify-center">
+                          <Button onClick={() => handleSubmit(index)}>
+                            ヒント評価を送信
+                          </Button>
+                        </div>
                       </div>
                     </CollapsibleContent>
                   </Collapsible>
