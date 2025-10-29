@@ -61,6 +61,7 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
                 to={`/question/${q.id}`}
                 className="text-blue-600 hover:underline text-lg font-semibold"
               >
+                <p>問題 {q.id}</p>
                 <p className="text-gray-600 mt-1 text-sm">
                   {q.problem_description.trim().slice(0, 100)}...
                 </p>
