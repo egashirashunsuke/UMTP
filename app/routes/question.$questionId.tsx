@@ -167,7 +167,9 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          {loaderData.prevId ? (
+
+          {/* 実験用アプリでは，学習者が問題一覧から，自身の問題を選択して回答するというユースケースを想定するため，なくす */}
+          {/* {loaderData.prevId ? (
             <Button asChild variant="secondary">
               <Link to={`/question/${loaderData.prevId}`}>
                 <>
@@ -192,7 +194,7 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
             <Button disabled variant="secondary">
               次の問題 <ChevronRightIcon></ChevronRightIcon>
             </Button>
-          )}
+          )} */}
         </div>
       </div>
       <div className="py-8 pr-8 flex-1">
