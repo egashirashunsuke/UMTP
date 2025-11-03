@@ -100,7 +100,7 @@ export default function TutorialPageContent({ loaderData }: Props) {
   };
 
   return (
-    <div className="first-step">
+    <div className="all-page">
       <div className="flex w-full h-screen">
         <div className="p-8">
           <div className="flex gap-80">
@@ -129,7 +129,9 @@ export default function TutorialPageContent({ loaderData }: Props) {
           <div className="flex gap-2 justify-center">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button>回答を送信</Button>
+                <div className="submit-answer-button">
+                  <Button>回答を送信</Button>
+                </div>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>

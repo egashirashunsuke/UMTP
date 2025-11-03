@@ -62,7 +62,7 @@ export default function TutorialPage({ loaderData }: Route.ComponentProps) {
 
 const steps = [
   {
-    selector: ".question-area",
+    selector: ".all-page",
     content: (
       <div>
         これからチュートリアルを始めます。
@@ -155,7 +155,7 @@ const steps = [
         <br />
         再度ボタン「ヒントを要求する」を押してください。
         <br />
-        （生成に少し時間がかかる場合があります。1分ほど）
+        （生成に1,2分ほど時間がかかる場合がありますので、もう一度問題を見直しながらお待ちください。）
       </div>
     ),
   },
@@ -165,7 +165,7 @@ const steps = [
       <div>
         現在の回答に誤りがなければ、
         <br />
-        このようにヒントが生成されます。
+        ヒントが生成されます。
       </div>
     ),
   },
@@ -211,7 +211,17 @@ const steps = [
         <br />
         レベル2、レベル3のヒントへ進み、
         <br />
-        より詳しい情報を参考にしましょう。
+        より詳しい情報を参考にすることができます。
+      </div>
+    ),
+  },
+  {
+    selector: ".hint-area",
+    content: (
+      <div>
+        ヒントを閲覧したら、次の行動にうつる前にヒントの評価をお願いします。
+        <br />
+        ヒントが役に立ったかを5段階で評価し、その理由を記入してもらいます。
       </div>
     ),
   },
@@ -223,7 +233,19 @@ const steps = [
       <div>
         <strong style={{ color: "green" }}>[実際に操作]</strong>
         <br />
-        レベル2のヒントもクリックし、開いてみましょう。
+        ヒントを5段階で評価し、その理由を記入した後、送信ボタンを押してみましょう。
+      </div>
+    ),
+  },
+  {
+    selector: ".hint-area",
+    stepInteraction: true,
+    spotlightClicks: true,
+    content: (
+      <div>
+        <strong style={{ color: "green" }}>[実際に操作]</strong>
+        <br />
+        レベル1のヒントでは分からなかったとして、レベル2のヒントもクリックし、開いてみましょう。
       </div>
     ),
   },
@@ -240,7 +262,7 @@ const steps = [
     ),
   },
   {
-    selector: ".hint-area",
+    selector: ".submit-answer-button",
     content: (
       <div>
         回答が完成したら、
@@ -252,7 +274,7 @@ const steps = [
     ),
   },
   {
-    selector: ".hint-area",
+    selector: ".all-page",
     content: (
       <div>
         チュートリアルは以上です。
