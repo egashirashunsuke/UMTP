@@ -12,10 +12,10 @@ import "./app.css";
 import Header from "./components/Header";
 import { Auth0Provider } from "@auth0/auth0-react";
 
-const domain = "dev-55s6i56praqrjrxk.us.auth0.com";
-const clientId = "WAtTTAdOQ99lacUikbSlhaYvsZ6RuTKL";
-const redirectUri = "https://localhost:5173/questions";
-
+const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
+const redirectUri = import.meta.env.VITE_AUTH0_REDIRECT_URI;
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -54,7 +54,7 @@ export default function App() {
       clientId={clientId}
       authorizationParams={{
         redirect_uri: redirectUri,
-        audience: "http://localhost:8000",
+        audience, // ここは string | undefined なのでそのままでOK
       }}
     >
       <Header />
