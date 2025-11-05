@@ -148,7 +148,7 @@ export default function TutorialPageContent({ loaderData }: Props) {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            {loaderData.prevId ? (
+            {/* {loaderData.prevId ? (
               <Button asChild variant="secondary">
                 <Link to={`/question/${loaderData.prevId}`}>
                   <>
@@ -173,7 +173,7 @@ export default function TutorialPageContent({ loaderData }: Props) {
               <Button disabled variant="secondary">
                 次の問題 <ChevronRightIcon></ChevronRightIcon>
               </Button>
-            )}
+            )} */}
           </div>
         </div>
         <div className="hint-area">
