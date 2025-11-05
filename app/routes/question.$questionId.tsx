@@ -122,10 +122,14 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
         ? "https://umtp-backend-1.onrender.com"
         : "http://localhost:8000",
       questionId: questionId ? Number(questionId) : undefined,
+      studentId: isAuthenticated
+        ? user?.email?.split("@")[0]?.slice(0, 8)
+        : undefined,
       event_name: "submit_answer",
       answers: answers,
       seenHints: everOpenHints,
       hints: hints,
+      getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
     });
     setEverOpenHints([]);
     sessionStorage.removeItem(`seenHints-${questionId}`);

@@ -30,6 +30,8 @@ import { Loader2Icon } from "lucide-react";
 import { sendLog } from "~/utils/logging";
 import { LikertSlider } from "./LikertSlider";
 
+import { useAuth0 } from "@auth0/auth0-react";
+
 export type Answers = { [key: string]: string };
 
 type HintareaProps = {
@@ -57,6 +59,8 @@ function Hintarea({
   const [loading, setLoading] = useState(false);
   const [useful, setUseful] = useState<number>(3);
   const [comment, setComment] = useState("");
+
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     if (questionId != null) {
@@ -110,10 +114,14 @@ function Hintarea({
       await sendLog({
         baseURL,
         questionId,
+        studentId: isAuthenticated
+          ? user?.email?.split("@")[0]?.slice(0, 8)
+          : undefined,
         event_name: "hint_request",
         answers,
         seenHints: everOpenHints,
         hints: hintRes.data.hints,
+        getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
       });
     } catch (e) {
       console.error("通信失敗", e);
@@ -141,10 +149,14 @@ function Hintarea({
     await sendLog({
       baseURL,
       questionId,
+      studentId: isAuthenticated
+        ? user?.email?.split("@")[0]?.slice(0, 8)
+        : undefined,
       event_name: `open_hint_level_${hintIndex + 1}`,
       answers,
       seenHints: newEverOpenHints,
       hints: hints,
+      getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
     });
   };
 
@@ -160,6 +172,9 @@ function Hintarea({
     sendLog({
       baseURL,
       questionId,
+      studentId: isAuthenticated
+        ? user?.email?.split("@")[0]?.slice(0, 8)
+        : undefined,
       event_name: `feedback_level_${hintIndex + 1}`,
       answers,
       seenHints: everOpenHints,
@@ -167,6 +182,7 @@ function Hintarea({
       hintIndex,
       useful,
       comment,
+      getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
     });
     setUseful(3);
     setComment("");
