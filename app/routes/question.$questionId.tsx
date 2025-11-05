@@ -104,7 +104,9 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
     await sendLog({
       baseURL,
       questionId: questionId ? Number(questionId) : undefined,
-      studentId: isAuthenticated && user?.email?.split("@")[0]?.slice(0, 8),
+      studentId: isAuthenticated
+        ? user?.email?.split("@")[0]?.slice(0, 8)
+        : undefined,
       event_name: `answer_change`,
       answers: newAnswers,
       seenHints: everOpenHints,

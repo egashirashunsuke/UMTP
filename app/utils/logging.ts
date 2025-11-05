@@ -1,5 +1,7 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
+import { getAnonId } from "../lib/anon";
+
 import type { Answers } from "~/routes/home";
 
 type GetToken = () => Promise<string>; // 任意
@@ -7,7 +9,7 @@ type GetToken = () => Promise<string>; // 任意
 type LogParams = {
   baseURL: string;
   questionId?: number;
-  studentId?: string | false;
+  studentId?: string;
   event_name: string;
   answers?: Answers;
   seenHints: number[];
@@ -16,10 +18,11 @@ type LogParams = {
   useful?: number;
   comment?: string;
   getToken?: GetToken;
-  anonId?: string;
   signal?: AbortSignal;
   timeoutMs?: number;
 };
+
+const anonId = getAnonId();
 
 export async function sendLog({
   baseURL,
@@ -33,10 +36,11 @@ export async function sendLog({
   useful,
   comment,
   getToken,
-  anonId,
   signal,
   timeoutMs = 8000,
 }: LogParams) {
+  const finalAnonId = getAnonId();
+
   const hint_open_status = Object.fromEntries(
     hints.map((_, i) => [i + 1, seenHints.includes(i)]) // seenHints が 0始まり想定
   );
@@ -51,7 +55,7 @@ export async function sendLog({
     hintIndex,
     useful,
     comment,
-    anon_id: anonId,
+    anon_id: finalAnonId,
     timestamp: new Date().toISOString(),
   };
 
