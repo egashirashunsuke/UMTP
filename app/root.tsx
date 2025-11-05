@@ -14,7 +14,7 @@ import { Auth0Provider } from "@auth0/auth0-react";
 
 const domain = "dev-55s6i56praqrjrxk.us.auth0.com";
 const clientId = "WAtTTAdOQ99lacUikbSlhaYvsZ6RuTKL";
-const redirectUri = typeof window !== "undefined" ? window.location.origin : "";
+const redirectUri = "https://localhost:5173/questions";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -54,6 +54,7 @@ export default function App() {
       clientId={clientId}
       authorizationParams={{
         redirect_uri: redirectUri,
+        audience: "http://localhost:8000",
       }}
     >
       <Header />
