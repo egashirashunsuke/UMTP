@@ -24,8 +24,8 @@ import {
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
 import { Button } from "../components/ui/button";
-import { ChevronRightIcon, ChevronLeftIcon } from "lucide-react";
 import { sendLog } from "~/utils/logging";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export type Choice = {
   id: number;
@@ -91,20 +91,25 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
   );
   const [hints, setHints] = useState<string[]>([]);
   const [everOpenHints, setEverOpenHints] = useState<number[]>([]);
+  const baseURL = import.meta.env.PROD
+    ? "https://umtp-backend-1.onrender.com"
+    : "http://localhost:8000";
+
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const handleAnswerChange = async (label: string, value: string) => {
     const newAnswers = { ...answers, [label]: value };
     setAnswers(newAnswers);
-    const baseURL = import.meta.env.PROD
-      ? "https://umtp-backend-1.onrender.com"
-      : "http://localhost:8000";
+
     await sendLog({
       baseURL,
       questionId: questionId ? Number(questionId) : undefined,
+      studentId: isAuthenticated && user?.email?.split("@")[0]?.slice(0, 8),
       event_name: `answer_change`,
       answers: newAnswers,
       seenHints: everOpenHints,
       hints: hints,
+      getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
     });
   };
 
