@@ -59,11 +59,13 @@ function Hintarea({
   const [loading, setLoading] = useState(false);
   const [useful, setUseful] = useState<number>(3);
   const [comment, setComment] = useState("");
+  const [openLevels, setOpenLevels] = useState<number[]>([]);
 
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     if (questionId != null) {
+      setOpenLevels([]);
       const saved = sessionStorage.getItem(`seenHints-${questionId}`);
       if (saved) {
         setEverOpenHints(JSON.parse(saved));
@@ -109,6 +111,8 @@ function Hintarea({
         `${baseURL}/question/${questionId}/hints`,
         { answers }
       );
+      setOpenLevels([]);
+
       setHints(hintRes.data.hints);
 
       await sendLog({
@@ -131,33 +135,42 @@ function Hintarea({
     }
   };
 
-  const toggleHint = async (hintIndex: number) => {
-    if (everOpenHints.includes(hintIndex)) return;
+  const toggleHint = async (hintIndex: number, open: boolean) => {
+    if (open) {
+      if (hintIndex > 0 && !openLevels.includes(hintIndex - 1)) {
+        console.log("前のレベルを先に開けてください");
+        return;
+      }
 
-    if (hintIndex > 0 && !everOpenHints.includes(hintIndex - 1)) {
-      console.log("前のレベルを先に開けてください");
+      setOpenLevels((prev) =>
+        prev.includes(hintIndex) ? prev : [...prev, hintIndex]
+      );
+
+      const isFirstOpen = !everOpenHints.includes(hintIndex);
+      if (isFirstOpen) {
+        setEverOpenHints((prev) => [...prev, hintIndex]);
+      }
+
+      const baseURL = import.meta.env.PROD
+        ? "https://umtp-backend-1.onrender.com"
+        : "http://localhost:8000";
+
+      await sendLog({
+        baseURL,
+        questionId,
+        studentId: isAuthenticated
+          ? user?.email?.split("@")[0]?.slice(0, 8)
+          : undefined,
+        event_name: `open_hint_level_${hintIndex + 1}`,
+        answers,
+        seenHints: isFirstOpen ? [...everOpenHints, hintIndex] : everOpenHints,
+        hints,
+        getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
+      });
+    } else {
+      //閉じる機能はいらない
       return;
     }
-
-    const newEverOpenHints = [...everOpenHints, hintIndex];
-    setEverOpenHints(newEverOpenHints);
-
-    const baseURL = import.meta.env.PROD
-      ? "https://umtp-backend-1.onrender.com"
-      : "http://localhost:8000";
-
-    await sendLog({
-      baseURL,
-      questionId,
-      studentId: isAuthenticated
-        ? user?.email?.split("@")[0]?.slice(0, 8)
-        : undefined,
-      event_name: `open_hint_level_${hintIndex + 1}`,
-      answers,
-      seenHints: newEverOpenHints,
-      hints: hints,
-      getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
-    });
   };
 
   const handleSubmit = (hintIndex: number) => {
@@ -260,8 +273,8 @@ function Hintarea({
               hints.map((hint, index) => (
                 <div key={index}>
                   <Collapsible
-                    open={everOpenHints.includes(index)}
-                    onOpenChange={() => toggleHint(index)}
+                    open={openLevels.includes(index)}
+                    onOpenChange={(open) => toggleHint(index, open)}
                   >
                     <CollapsibleTrigger asChild>
                       <Button
