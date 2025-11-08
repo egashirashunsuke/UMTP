@@ -273,10 +273,10 @@ function Hintarea({
                           <span className="font-bold">レベル {index + 1}</span>
                           <Badge className={getHintColor(index)}>
                             {index === 0
-                              ? "方向付け"
+                              ? "注意喚起"
                               : index === 1
-                              ? "部分解答"
-                              : "手順ガイド"}
+                              ? "一般原理"
+                              : "一般原理適用"}
                           </Badge>
                           <Badge
                             variant="outline"
