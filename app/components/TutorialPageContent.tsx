@@ -26,6 +26,7 @@ import { ChevronRightIcon, ChevronLeftIcon } from "lucide-react";
 import { sendLog } from "~/utils/logging";
 import { useTour } from "@reactour/tour";
 import type { LoaderData } from "~/routes/tutorial";
+import { toast } from "sonner";
 
 export type Choice = {
   id: number;
@@ -97,6 +98,7 @@ export default function TutorialPageContent({ loaderData }: Props) {
     setEverOpenHints([]);
     sessionStorage.removeItem(`seenHints-${questionId}`);
     setHints([]);
+    toast.success("回答を送信しました！");
   };
 
   return (
@@ -148,45 +150,18 @@ export default function TutorialPageContent({ loaderData }: Props) {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            {/* {loaderData.prevId ? (
-              <Button asChild variant="secondary">
-                <Link to={`/question/${loaderData.prevId}`}>
-                  <>
-                    <ChevronLeftIcon /> 前の問題
-                  </>
-                </Link>
-              </Button>
-            ) : (
-              <Button disabled variant="secondary">
-                <ChevronLeftIcon />
-                前の問題
-              </Button>
-            )}
-
-            {loaderData.nextId ? (
-              <Button asChild variant="secondary">
-                <Link to={`/question/${loaderData.nextId}`}>
-                  次の問題 <ChevronRightIcon></ChevronRightIcon>
-                </Link>
-              </Button>
-            ) : (
-              <Button disabled variant="secondary">
-                次の問題 <ChevronRightIcon></ChevronRightIcon>
-              </Button>
-            )} */}
           </div>
         </div>
-        <div className="hint-area">
-          <div className="py-8 pr-8 flex-1">
-            <Hintarea
-              answers={answers}
-              questionId={questionId ? Number(questionId) : undefined}
-              hints={hints}
-              setHints={setHints}
-              everOpenHints={everOpenHints}
-              setEverOpenHints={setEverOpenHints}
-            />
-          </div>
+
+        <div className="hint-area py-8 pr-8 flex-1">
+          <Hintarea
+            answers={answers}
+            questionId={questionId ? Number(questionId) : undefined}
+            hints={hints}
+            setHints={setHints}
+            everOpenHints={everOpenHints}
+            setEverOpenHints={setEverOpenHints}
+          />
         </div>
       </div>
     </div>
