@@ -108,6 +108,20 @@ function Hintarea({
       }
 
       setIsAnswerProgressCorrect(true);
+
+      await sendLog({
+        baseURL,
+        questionId,
+        studentId: isAuthenticated
+          ? user?.email?.split("@")[0]?.slice(0, 8)
+          : undefined,
+        event_name: "hint_request_click",
+        answers,
+        seenHints: everOpenHints,
+        hints: hints,
+        getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
+      });
+
       const hintRes = await axios.post<HintResponse>(
         `${baseURL}/question/${questionId}/hints`,
         { answers }
@@ -122,7 +136,7 @@ function Hintarea({
         studentId: isAuthenticated
           ? user?.email?.split("@")[0]?.slice(0, 8)
           : undefined,
-        event_name: "hint_request",
+        event_name: "hint_recieved",
         answers,
         seenHints: everOpenHints,
         hints: hintRes.data.hints,
