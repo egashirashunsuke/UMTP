@@ -26,6 +26,7 @@ import {
 import { Button } from "../components/ui/button";
 import { sendLog } from "~/utils/logging";
 import { useAuth0 } from "@auth0/auth0-react";
+import { toast } from "sonner";
 
 export type Choice = {
   id: number;
@@ -134,6 +135,7 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
     setEverOpenHints([]);
     sessionStorage.removeItem(`seenHints-${questionId}`);
     setHints([]);
+    toast.success("回答を送信しました");
   };
 
   return (
