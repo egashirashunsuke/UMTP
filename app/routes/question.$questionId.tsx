@@ -135,7 +135,7 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
     setEverOpenHints([]);
     sessionStorage.removeItem(`seenHints-${questionId}`);
     setHints([]);
-    toast.success("回答を送信しました");
+    toast.success("回答を送信しました!");
   };
 
   return (
@@ -180,34 +180,6 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-
-          {/* 実験用アプリでは，学習者が問題一覧から，自身の問題を選択して回答するというユースケースを想定するため，なくす */}
-          {/* {loaderData.prevId ? (
-            <Button asChild variant="secondary">
-              <Link to={`/question/${loaderData.prevId}`}>
-                <>
-                  <ChevronLeftIcon /> 前の問題
-                </>
-              </Link>
-            </Button>
-          ) : (
-            <Button disabled variant="secondary">
-              <ChevronLeftIcon />
-              前の問題
-            </Button>
-          )}
-
-          {loaderData.nextId ? (
-            <Button asChild variant="secondary">
-              <Link to={`/question/${loaderData.nextId}`}>
-                次の問題 <ChevronRightIcon></ChevronRightIcon>
-              </Link>
-            </Button>
-          ) : (
-            <Button disabled variant="secondary">
-              次の問題 <ChevronRightIcon></ChevronRightIcon>
-            </Button>
-          )} */}
         </div>
       </div>
       <div className="py-8 pr-8 flex-1">

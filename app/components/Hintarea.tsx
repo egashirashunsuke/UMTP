@@ -31,6 +31,7 @@ import { sendLog } from "~/utils/logging";
 import { LikertSlider } from "./LikertSlider";
 
 import { useAuth0 } from "@auth0/auth0-react";
+import { toast } from "sonner";
 
 export type Answers = { [key: string]: string };
 
@@ -199,7 +200,7 @@ function Hintarea({
     });
     setUseful(3);
     setComment("");
-    alert("✅ 評価を送信しました！");
+    toast.success("評価を送信しました！");
   };
 
   const getHintIcon = (level: number) => {
