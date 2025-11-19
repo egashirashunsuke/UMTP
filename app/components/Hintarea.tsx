@@ -104,23 +104,22 @@ function Hintarea({
 
       if (!checkRes.data.correct) {
         setIsAnswerProgressCorrect(false);
+        await sendLog({
+          baseURL,
+          questionId,
+          studentId: isAuthenticated
+            ? user?.email?.split("@")[0]?.slice(0, 8)
+            : undefined,
+          event_name: "now_answer_is_not_correct",
+          answers,
+          seenHints: everOpenHints,
+          hints: hints,
+          getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
+        });
         return;
       }
 
       setIsAnswerProgressCorrect(true);
-
-      await sendLog({
-        baseURL,
-        questionId,
-        studentId: isAuthenticated
-          ? user?.email?.split("@")[0]?.slice(0, 8)
-          : undefined,
-        event_name: "hint_request_click",
-        answers,
-        seenHints: everOpenHints,
-        hints: hints,
-        getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
-      });
 
       const hintRes = await axios.post<HintResponse>(
         `${baseURL}/question/${questionId}/hints`,
@@ -332,24 +331,7 @@ function Hintarea({
                           {hint}
                         </p>
                       </div>
-                      <div className="p-4 border shadow-sm bg-white space-y-2">
-                        <LikertSlider
-                          question="このヒントは役に立ちましたか？"
-                          value={useful}
-                          onChange={setUseful}
-                        />
-                        <textarea
-                          placeholder="上記の評価の理由をご記入ください。"
-                          className="w-full h-20 p-2 border text-sm focus:ring-blue-400 focus:border-blue-400"
-                          value={comment}
-                          onChange={(e) => setComment(e.target.value)}
-                        />
-                        <div className="flex justify-center">
-                          <Button onClick={() => handleSubmit(index)}>
-                            ヒント評価を送信
-                          </Button>
-                        </div>
-                      </div>
+                     
                     </CollapsibleContent>
                   </Collapsible>
                   {index < hints.length - 1 && <Separator className="mt-4" />}
