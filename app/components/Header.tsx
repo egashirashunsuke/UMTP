@@ -94,11 +94,12 @@ const Header = () => {
               {/* 必要に応じて Settings などを追加 */}
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() =>
+                onClick={() =>{
+                  localStorage.removeItem("anon_id");
                   logout({
                     logoutParams: { returnTo: window.location.origin },
                   })
-                }
+                }}
               >
                 ログアウト
               </DropdownMenuItem>
