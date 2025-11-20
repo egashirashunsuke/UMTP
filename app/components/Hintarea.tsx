@@ -247,7 +247,7 @@ function Hintarea({
       <section className="bg-white shadow rounded-xl p-6 border border-gray-200 h-full overflow-y-auto">
         <div className="mb-3">
           <Button onClick={createHint} disabled={loading}>
-            ヒントを要求する
+            解答を参照する
             {loading && <Loader2Icon className="animate-spin" />}
           </Button>
         </div>
