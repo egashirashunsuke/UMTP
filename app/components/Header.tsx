@@ -25,7 +25,7 @@ const Header = () => {
       {/* 中央ナビ */}
       <nav>
         <ul className="flex space-x-2">
-          <li>
+          {/* <li>
             <NavLink
               to="/"
               className={({ isActive }) =>
@@ -36,9 +36,9 @@ const Header = () => {
             >
               このサイトについて
             </NavLink>
-          </li>
+          </li> */}
           <li>
-            <NavLink
+            {/* <NavLink
               to="/tutorial"
               className={({ isActive }) =>
                 isActive
@@ -47,7 +47,7 @@ const Header = () => {
               }
             >
               チュートリアル
-            </NavLink>
+            </NavLink> */}
             <NavLink
               to="/questions"
               className={({ isActive }) =>
