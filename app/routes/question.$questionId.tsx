@@ -90,8 +90,7 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
       ])
     )
   );
-  const [hints, setHints] = useState<string[]>([]);
-  const [everOpenHints, setEverOpenHints] = useState<number[]>([]);
+
   const baseURL = import.meta.env.PROD
     ? "https://umtp-backend-1.onrender.com"
     : "http://localhost:8000";
@@ -110,8 +109,6 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
         : undefined,
       event_name: `answer_change`,
       answers: newAnswers,
-      seenHints: everOpenHints,
-      hints: hints,
       getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
     });
   };
@@ -128,13 +125,9 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
         : undefined,
       event_name: "submit_answer",
       answers: answers,
-      seenHints: everOpenHints,
-      hints: hints,
       getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
     });
-    setEverOpenHints([]);
     sessionStorage.removeItem(`seenHints-${questionId}`);
-    setHints([]);
     toast.success("回答を送信しました!");
   };
 
@@ -186,10 +179,6 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
         <Hintarea
           answers={answers}
           questionId={questionId ? Number(questionId) : undefined}
-          hints={hints}
-          setHints={setHints}
-          everOpenHints={everOpenHints}
-          setEverOpenHints={setEverOpenHints}
         />
       </div>
     </div>
