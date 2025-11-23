@@ -19,7 +19,7 @@ const Header = () => {
     <header className="bg-white shadow-md h-14 flex items-center px-6">
       {/* 左側：ロゴ */}
       <h1 className="text-2xl font-bold text-gray-900 mr-8">
-        <NavLink to="/">UMTP Learning</NavLink>
+        <NavLink to="/">UMTP Learning A</NavLink>
       </h1>
 
       {/* 中央ナビ */}
