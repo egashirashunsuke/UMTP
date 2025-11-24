@@ -12,7 +12,6 @@ type LogParams = {
   studentId?: string;
   event_name: string;
   answers?: Answers;
-  hintIndex?: number;
   getToken?: GetToken;
   signal?: AbortSignal;
   timeoutMs?: number;
@@ -25,7 +24,6 @@ export async function sendLog({
   studentId,
   event_name,
   answers,
-  hintIndex,
   getToken,
   signal,
   timeoutMs = 8000,
@@ -38,7 +36,6 @@ export async function sendLog({
     student_id: studentId,
     event_name,
     answers,
-    hintIndex,
     anon_id: finalAnonId,
     timestamp: new Date().toISOString(),
   };
@@ -57,7 +54,6 @@ export async function sendLog({
       // 認証してない/期限切れ等 → そのまま匿名で送る
     }
   }
-  console.log(headers.Authorization);
 
   await axios.post(`${baseURL}/api/log`, logData, {
     headers,
