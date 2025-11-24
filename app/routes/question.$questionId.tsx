@@ -156,13 +156,13 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
         <div className="flex gap-2 justify-center">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button>回答を送信</Button>
+              <Button>解答を送信</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>回答を送信しますか?</AlertDialogTitle>
+                <AlertDialogTitle>解答を送信しますか?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  回答を送信すると，現在の回答内容が保存されます。よろしいですか？
+                  解答を送信すると，現在の解答内容が保存されます。よろしいですか？
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
