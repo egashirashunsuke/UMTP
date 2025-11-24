@@ -14,15 +14,11 @@ type LogParams = {
   answers?: Answers;
   seenHints: number[];
   hints: string[];
-  hintIndex?: number;
-  useful?: number;
-  comment?: string;
   getToken?: GetToken;
   signal?: AbortSignal;
   timeoutMs?: number;
 };
 
-const anonId = getAnonId();
 
 export async function sendLog({
   baseURL,
@@ -32,9 +28,6 @@ export async function sendLog({
   answers,
   seenHints,
   hints,
-  hintIndex,
-  useful,
-  comment,
   getToken,
   signal,
   timeoutMs = 8000,
@@ -52,9 +45,6 @@ export async function sendLog({
     answers,
     hint_open_status,
     hints: Object.fromEntries(hints.map((h, i) => [i + 1, h])),
-    hintIndex,
-    useful,
-    comment,
     anon_id: finalAnonId,
     timestamp: new Date().toISOString(),
   };
@@ -73,7 +63,6 @@ export async function sendLog({
       // 認証してない/期限切れ等 → そのまま匿名で送る
     }
   }
-  console.log(headers.Authorization);
 
   await axios.post(`${baseURL}/api/log`, logData, {
     headers,
