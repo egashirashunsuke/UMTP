@@ -114,7 +114,6 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
   };
 
   const handleSubmit = () => {
-    console.log("回答送信:", answers);
     sendLog({
       baseURL: import.meta.env.PROD
         ? "https://umtp-backend-1.onrender.com"

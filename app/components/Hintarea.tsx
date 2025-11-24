@@ -155,7 +155,7 @@ function Hintarea({
       <section className="bg-white shadow rounded-xl p-6 border border-gray-200 h-full overflow-y-auto">
         <div className="mb-3">
           <Button onClick={toggleSolution} disabled={loading}>
-            {isRevealed ? "解答を閉じる" : "解答を参照する"}
+            {isRevealed ? "正解を閉じる" : "正解を参照する"}
             {loading && <Loader2Icon className="animate-spin" />}
           </Button>
         </div>
@@ -164,16 +164,16 @@ function Hintarea({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lightbulb className="h-5 w-5 text-yellow-500" />
-              解答
+              正解
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 w-md">
             {!isRevealed ? (
               <div className="p-4 bg-gray-50 rounded-lg border-l-4 border-gray-400">
                 <p className="text-gray-600">
-                  まだ解答は表示されていません。
+                  まだ正解は表示されていません。
                   <br />
-                  「解答を参照する」ボタンを押してください。
+                  「正解を参照する」ボタンを押してください。
                 </p>
               </div>
             ) : (
