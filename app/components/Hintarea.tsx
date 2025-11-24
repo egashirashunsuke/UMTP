@@ -33,6 +33,12 @@ import { LikertSlider } from "./LikertSlider";
 import { useAuth0 } from "@auth0/auth0-react";
 import { toast } from "sonner";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "../components/ui/tooltip";
+
 export type Answers = { [key: string]: string };
 
 type HintareaProps = {
@@ -215,19 +221,26 @@ function Hintarea({
     <>
       <section className="bg-white shadow rounded-xl p-6 border border-gray-200 h-full overflow-y-auto">
         <div className="mb-3">
-          <Button onClick={createHint} disabled={loading}>
-            ヒントを要求する
-            {loading && <Loader2Icon className="animate-spin" />}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button onClick={createHint} disabled={loading}>
+                次のステップへのヒントを要求
+                {loading && <Loader2Icon className="animate-spin" />}
+              </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="">
+                <p>誤りがなければ、次のヒントを表示します</p>
+              </TooltipContent>
+          </Tooltip>
         </div>
 
         {isAnswerProgressCorrect === false && (
           <div className="mb-3">
             <Alert variant="destructive">
               <AlertCircleIcon />
-              <AlertTitle>あなたの現在の回答は間違えがあります。</AlertTitle>
+              <AlertTitle>あなたの現在の解答には誤りがあります。</AlertTitle>
               <AlertDescription>
-                問題をよく読み、自信のある部分まで回答し、再度ヒントを要求してください。
+                誤りのある部分を修正するか未選択に戻し、誤りがない状態にしてから再度ヒントを要求してください。
               </AlertDescription>
             </Alert>
           </div>
@@ -240,7 +253,7 @@ function Hintarea({
               LLMによるヒント
             </CardTitle>
             <CardDescription>
-              必要に応じてヒントを確認してください。ヒントはレベルが上がるにつれ，段階的に詳しくなります。
+              必要に応じてヒントを確認してください。ヒントはレベルが上がるにつれ、段階的に詳しくなります。
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 w-md">
