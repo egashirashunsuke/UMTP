@@ -58,8 +58,6 @@ function Hintarea({
 }: HintareaProps) {
   const [isAnswerProgressCorrect, setIsAnswerProgressCorrect] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [useful, setUseful] = useState<number>(3);
-  const [comment, setComment] = useState("");
   const [openLevels, setOpenLevels] = useState<number[]>([]);
 
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -185,35 +183,6 @@ function Hintarea({
       //閉じる機能はいらない
       return;
     }
-  };
-
-  const handleSubmit = (hintIndex: number) => {
-    if (useful === null) {
-      alert("評価を選択してください！");
-      return;
-    }
-    const baseURL = import.meta.env.PROD
-      ? "https://umtp-backend-1.onrender.com"
-      : "http://localhost:8000";
-
-    sendLog({
-      baseURL,
-      questionId,
-      studentId: isAuthenticated
-        ? user?.email?.split("@")[0]?.slice(0, 8)
-        : undefined,
-      event_name: `feedback_level_${hintIndex + 1}`,
-      answers,
-      seenHints: everOpenHints,
-      hints,
-      hintIndex,
-      useful,
-      comment,
-      getToken: isAuthenticated ? () => getAccessTokenSilently() : undefined,
-    });
-    setUseful(3);
-    setComment("");
-    toast.success("評価を送信しました！");
   };
 
   const getHintIcon = (level: number) => {
