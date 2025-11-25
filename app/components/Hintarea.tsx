@@ -56,6 +56,9 @@ function Hintarea({
 
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
+  const isHintBlockedQuestion = questionId != null && [2, 6, 8, 9, 10, 13].includes(questionId);
+  const isHintButtonDisabled = loading || isHintBlockedQuestion;
+
   const toggleSolution = async () => {
     const baseURL = import.meta.env.PROD
     ? "https://umtp-backend-1.onrender.com"
@@ -154,7 +157,7 @@ function Hintarea({
     <>
       <section className="bg-white shadow rounded-xl p-6 border border-gray-200 h-full overflow-y-auto">
         <div className="mb-3">
-          <Button onClick={toggleSolution} disabled={loading}>
+          <Button onClick={toggleSolution} disabled={isHintButtonDisabled}>
             {isRevealed ? "正解を閉じる" : "正解を参照する"}
             {loading && <Loader2Icon className="animate-spin" />}
           </Button>
