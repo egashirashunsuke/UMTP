@@ -68,6 +68,11 @@ function Hintarea({
 
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
+  const isHintBlockedQuestion =
+    questionId != null && [2, 6, 8, 9, 10, 13].includes(questionId);
+
+  const isHintButtonDisabled = loading || isHintBlockedQuestion;
+
   useEffect(() => {
     if (questionId != null) {
       setOpenLevels([]);
@@ -223,8 +228,8 @@ function Hintarea({
         <div className="mb-3">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button onClick={createHint} disabled={loading}>
-                次のステップへのヒントを要求
+            <Button onClick={createHint} disabled={isHintButtonDisabled}>
+            次のステップへのヒントを要求
                 {loading && <Loader2Icon className="animate-spin" />}
               </Button>
               </TooltipTrigger>
