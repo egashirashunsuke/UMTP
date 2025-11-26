@@ -73,24 +73,14 @@ const Header = () => {
                     referrerPolicy="no-referrer"
                   />
                   <AvatarFallback>
-                    {(user?.name || user?.email || "U")
+                    {(user?.email || "U")
                       .slice(0, 1)
                       .toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="hidden sm:block text-gray-800 max-w-[14rem] truncate">
-                  {user?.name || user?.email}
-                </span>
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="truncate">
-                {user?.name || user?.email}
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <NavLink to="/profile">プロフィール</NavLink>
-              </DropdownMenuItem>
               {/* 必要に応じて Settings などを追加 */}
               <DropdownMenuSeparator />
               <DropdownMenuItem
