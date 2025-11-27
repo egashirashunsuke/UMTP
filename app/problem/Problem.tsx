@@ -60,7 +60,10 @@ export function Problem({
                 justifyContent: "center",
               }}
             >
-              <img src={image} />
+              <img
+                src={image}
+                className="h-70 object-contain"
+              />
             </TransformComponent>
           </TransformWrapper>
         </section>
