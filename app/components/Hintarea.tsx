@@ -68,8 +68,7 @@ function Hintarea({
 
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
-  const isHintBlockedQuestion =
-    questionId != null && [2, 6, 8, 9, 10, 13].includes(questionId);
+  const isHintBlockedQuestion = questionId != null && [2, 5, 6, 7, 8, 9, 10, 12, 13].includes(questionId);
 
   const isHintButtonDisabled = loading || isHintBlockedQuestion;
 
