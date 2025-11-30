@@ -44,6 +44,10 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
   }
   console.log("loaderData", loaderData);
 
+  const HIDDEN_IDS = new Set([2, 6, 8, 9, 10, 13]); 
+
+  const visibleQuestions = loaderData.filter((q) => !HIDDEN_IDS.has(q.id));
+
   return (
     <div className="flex w-full min-h-screen m-8">
       <div className="w-7xl">
@@ -55,7 +59,7 @@ export default function QuestionPage({ loaderData }: Route.ComponentProps) {
           </BreadcrumbList>
         </Breadcrumb>
         <ul className="space-y-4 mt-4">
-          {loaderData.map((q) => (
+          {visibleQuestions.map((q) => (
             <li key={q.id} className="border rounded p-4 hover:bg-gray-50">
               <Link
                 to={`/question/${q.id}`}
